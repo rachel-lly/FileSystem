@@ -1,5 +1,6 @@
 package com.example.filesystem;
 
+import com.example.filesystem.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -7,6 +8,6 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper {
 
     @Select("SELECT * FROM user WHERE name = #{name} and password = #{password}")
-    User getUser(String name,String password);
+    User getUser(String name, String password);
 
 }

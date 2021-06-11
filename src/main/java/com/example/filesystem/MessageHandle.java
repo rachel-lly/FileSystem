@@ -1,5 +1,6 @@
 package com.example.filesystem;
 
+import com.example.filesystem.model.User;
 import com.example.filesystem.util.JudgeUtil;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class MessageHandle {
             if (!JudgeUtil.isNull(user)) {
                 // TODO: 2021/6/11 文件处理
                 //登录成功后自动初始化文件
-               // messageUtil.fileService.initDirectory(username);
+               // messageHandle.fileService.initDirectory(username);
                 addUser(user);
                 break;
             }
