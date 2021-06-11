@@ -14,8 +14,18 @@ import java.util.Scanner;
 @Service
 public class UserLogin {
 
+    public static UserLogin instance;
+
     @Resource
     private UserMapper mapper;
+
+    public static UserLogin getInstance(){
+
+        if(instance == null){
+            instance = new UserLogin();
+        }
+        return instance;
+    }
 
     public static Map<SocketChannel, User> loginMap = new HashMap<>();
 

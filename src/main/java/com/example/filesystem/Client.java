@@ -43,9 +43,7 @@ public class Client {
                         if (client.isConnectionPending()) {
                             client.finishConnect();
                             ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-//                            byteBuffer.put((LocalDateTime.now() + "连接成功").getBytes());
-//                            byteBuffer.flip();
-//                            client.write(byteBuffer);
+
                             //开启线程池,用于用户的输入（阻塞的）
                             ExecutorService executorService = newSingleThreadExecutor(Executors.defaultThreadFactory());
                             executorService.submit(() ->{
@@ -55,8 +53,7 @@ public class Client {
                                             //说明刚刚进来，需要登录，调用登录方法
                                             User user = UserLogin.userLogin(byteBuffer, client);
                                             UserLogin.loginMap.put(client, user);
-                                        }
-                                        else {
+                                        }else {
                                             byteBuffer.clear();
                                             InputStreamReader input = new InputStreamReader(System.in);
                                             BufferedReader reader = new BufferedReader(input);
@@ -79,9 +76,7 @@ public class Client {
                         if (count > 0) {
                             String receiveMessage = new String(readBuffer.array(), 0, count);
                             //对收到的消息进行处理
-
-                            // TODO: 2021/6/10 MessageUtil
-                           // MessageUtil.clientMessage(receiveMessage, client);
+                            MessageHandle.clientMessage(receiveMessage, client);
                         }
                     }
                 }
