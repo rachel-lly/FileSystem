@@ -7,7 +7,7 @@ import lombok.Data;
  * @Date: 2021-06-11 19:45
  */
 @Data
-public class DAT {
+public class BitMap {
 
     private Integer line;
     private Integer column;
@@ -17,7 +17,7 @@ public class DAT {
     * @Description: 初始化位示图
     * @param：[line, column]
     */
-    public DAT(Integer line, Integer column) {
+    public BitMap(Integer line, Integer column) {
         this.line = line;
         this.column = column;
         this.fBlocks = new Boolean[line][column];

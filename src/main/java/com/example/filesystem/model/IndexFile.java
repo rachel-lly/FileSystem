@@ -13,9 +13,9 @@ public class IndexFile {
 
     private Integer index;
     private String path;
-    private Boolean fileType;//0--目录文件 1--文件
+    private Boolean isCatalog;//true--目录文件 false--文件
 
-    private Integer permission;//0--public 1--private
+    private Boolean isPublic;//true--public false--private
 
     private FatBlock firstBlock;
 
@@ -27,13 +27,13 @@ public class IndexFile {
 
     private LinkedList<Index> children;//文件目录才有子目录
 
-    public IndexFile(Integer index, String path, Boolean fileType, Integer permission,
+    public IndexFile(Integer index, String path, Boolean isCatalog, Boolean isPublic,
                      FatBlock firstBlock, Index parent, String modifyTime,
                      Integer status, LinkedList<Index> children) {
         this.index = index;
         this.path = path;
-        this.fileType = fileType;
-        this.permission = permission;
+        this.isCatalog = isCatalog;
+        this.isPublic = isPublic;
         this.firstBlock = firstBlock;
         this.parent = parent;
         this.modifyTime = modifyTime;

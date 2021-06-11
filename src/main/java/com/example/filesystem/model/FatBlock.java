@@ -6,4 +6,9 @@ import lombok.Data;
 public class FatBlock{
     private Integer blockId;
     private Integer nextBlockId;
+
+    public FatBlock(Integer blockId, Integer nextBlockId) {
+        this.blockId = blockId;
+        this.nextBlockId = nextBlockId;
+    }
 }

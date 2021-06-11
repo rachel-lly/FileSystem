@@ -1,6 +1,7 @@
 package com.example.filesystem;
 
 import com.example.filesystem.model.User;
+import com.example.filesystem.util.UserLoginUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,10 +52,10 @@ public class Client {
                             executorService.submit(() ->{
                                 while (true) {
                                     try {
-                                        if (UserLogin.loginMap.isEmpty()) {
+                                        if (UserLoginUtil.loginMap.isEmpty()) {
                                             //说明刚刚进来，需要登录，调用登录方法
-                                            User user = UserLogin.userLogin(byteBuffer, client);
-                                            UserLogin.loginMap.put(client, user);
+                                            User user = UserLoginUtil.userLogin(byteBuffer, client);
+                                            UserLoginUtil.loginMap.put(client, user);
                                         }else {
                                             byteBuffer.clear();
                                             InputStreamReader input = new InputStreamReader(System.in);
