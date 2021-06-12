@@ -2,7 +2,8 @@ package com.example.filesystem;
 
 import com.example.filesystem.model.Index;
 import com.example.filesystem.model.User;
-import com.example.filesystem.util.JudgeUtil;
+import com.example.filesystem.service.MessageHandle;
+import com.example.filesystem.util.Util;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -37,7 +38,7 @@ public class FileSystemApplication implements CommandLineRunner {
             Scanner scanner = new Scanner(System.in);
             while (true) {
                 //输出当前路径
-                if (JudgeUtil.isStringEmpty(userPath.get(user).getFileName())) {
+                if (Util.isStringEmpty(userPath.get(user).getFileName())) {
                     System.out.print("[" + user.getName() + "@" + "localhost " + userPath.get(user).getPath() + "]$");
                 }
                 else {

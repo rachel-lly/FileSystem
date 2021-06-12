@@ -1,10 +1,9 @@
-package com.example.filesystem;
+package com.example.filesystem.service;
 
 import com.example.filesystem.model.User;
-import com.example.filesystem.util.JudgeUtil;
 import com.example.filesystem.util.UserLoginUtil;
+import com.example.filesystem.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -16,25 +15,20 @@ import java.util.Scanner;
 public class MessageHandle {
 
     private static final List<User> loginUserList = new ArrayList<>();
-
-
+    
     @Autowired
-    private FileServer fileService;
-
-    @Autowired
-    private UserServer userServer;
-
+    private Service service;
+    
     private static MessageHandle messageHandle;
 
     @PostConstruct
     public void init() {
         messageHandle = this;
-        messageHandle.fileService = this.fileService;
-        messageHandle.userServer = this.userServer;
+        messageHandle.service = this.service;
     }
 
     public static void addUser(User user) {
-        if (!JudgeUtil.isNull(user)) {
+        if (!Util.isNull(user)) {
             loginUserList.add(user);
         }
     }
@@ -46,7 +40,7 @@ public class MessageHandle {
 
     public static void clientMessage(String receiveMessage, SocketChannel client) {
 
-        if (JudgeUtil.isStringEmpty(receiveMessage)) {
+        if (Util.isStringEmpty(receiveMessage)) {
             System.out.println("服务端发送空消息");
             return;
         }
@@ -70,9 +64,9 @@ public class MessageHandle {
             System.out.print("password:");
             password = scanner.nextLine();
 
-            user = messageHandle.userServer.login(username, password);
-            if (!JudgeUtil.isNull(user)) {
-                messageHandle.fileService.initDirectory(username);
+            user = messageHandle.service.login(username, password);
+            if (!Util.isNull(user)) {
+                messageHandle.service.initDirectory(username);
                 addUser(user);
                 break;
             }
@@ -81,41 +75,41 @@ public class MessageHandle {
     }
 
     public static void handleMessage(String message, User user) {
-        if (JudgeUtil.isStringEmpty(message)) {
+        if (Util.isStringEmpty(message)) {
             //消息为空直接返回
             return;
         }
         if ("dir".equals(message)) {
             //查看当前路径下的所有文件目录
-            messageHandle.fileService.getDirectory(user);
+            messageHandle.service.getDirectory(user);
         }
         else if (message.matches("cd .+")) {
             //说明是想更换目录
-            messageHandle.fileService.changeDirectory(message, user);
+            messageHandle.service.changeDirectory(message, user);
         }
         else if (message.matches("create .+")) {
-            messageHandle.fileService.createFile(message, user);
+            messageHandle.service.createFile(message, user);
         }
         else if (message.matches("open .+")) {
-            messageHandle.fileService.openFile(message, user);
+            messageHandle.service.openFile(message, user);
         }
         else if (message.matches("read .+")) {
-            messageHandle.fileService.readFile(message, user);
+            messageHandle.service.readFile(message, user);
         }
         else if (message.matches("write .+")) {
-            messageHandle.fileService.writeFile(message, user);
+            messageHandle.service.writeFile(message, user);
         }
         else if (message.matches("close .+")) {
-            messageHandle.fileService.closeFile(message, user);
+            messageHandle.service.closeFile(message, user);
         }
         else if (message.matches("delete .+")) {
-            messageHandle.fileService.deleteFile(message, user);
+            messageHandle.service.deleteFile(message, user);
         }
         else if (message.matches("mkdir .+")) {
-            messageHandle.fileService.createDirectory(message, user);
+            messageHandle.service.createDirectory(message, user);
         }
         else if (message.matches("link .+")) {
-            messageHandle.fileService.linkFile(message, user);
+            messageHandle.service.linkFile(message, user);
         }
         else {
             System.out.println("Unknown command " + message);

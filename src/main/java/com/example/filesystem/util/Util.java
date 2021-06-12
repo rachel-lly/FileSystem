@@ -5,9 +5,17 @@ import java.util.Date;
 
 /**
  * @Author: rachel-lly
- * @Date: 2021-06-11 21:14
+ * @Date: 2021-06-12 11:50
  */
-public class TimeUtil {
+public class Util {
+
+    public static boolean isStringEmpty(String string){
+        return  (null == string  || "".equals(string) );
+    }
+
+    public static boolean isNull(Object object){
+        return null == object;
+    }
 
     public static String getCurrentTime() {
 

@@ -1,24 +1,27 @@
-package com.example.filesystem;
+package com.example.filesystem.service;
 
 
+import com.example.filesystem.FileSystemApplication;
+import com.example.filesystem.mapper.UserMapper;
 import com.example.filesystem.model.*;
-import com.example.filesystem.util.JudgeUtil;
-import com.example.filesystem.util.TimeUtil;
-import org.springframework.stereotype.Service;
+import com.example.filesystem.util.Util;
 
-import java.io.File;
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
  * @Author: rachel-lly
  * @Date: 2021-06-11 19:47
  */
-@Service
-public class FileServerImpl implements FileServer{
+@org.springframework.stereotype.Service
+public class ServiceImpl implements Service {
 
     private static final Integer LINE = 10;
     private static final Integer COLUMN = 10;
     private static final Integer BLOCKSIZE = 10;
+
+    @Resource
+    private UserMapper mapper;
 
     private static Integer index = 0;
 
@@ -48,7 +51,7 @@ public class FileServerImpl implements FileServer{
         bitMap.getFBlocks()[freePos / COLUMN][freePos % COLUMN] = true;
         //在根目录下生成一个新的目录文件，以用户名起名, 同时生成索引文件
         IndexFile indexFile = new IndexFile(index++, "/", true, true, fat.getFatBlocks()[freePos], null,
-                TimeUtil.getCurrentTime(), -1, new LinkedList<>());
+                Util.getCurrentTime(), -1, new LinkedList<>());
         root.add(new Index(indexFile, "Share", "/"));
     }
 
@@ -68,7 +71,7 @@ public class FileServerImpl implements FileServer{
             bitMap.getFBlocks()[place / COLUMN][place % COLUMN] = true;
             //在根目录下生成一个新的目录文件，以用户名起名, 同时生成索引文件
             IndexFile indexFile = new IndexFile(index++, "/", true, true, fat.getFatBlocks()[freePos.get(0)], null,
-                    TimeUtil.getCurrentTime(), -1, new LinkedList<>());
+                    Util.getCurrentTime(), -1, new LinkedList<>());
             root.add(new Index(indexFile, directoryName, "/"));
         }
     }
@@ -76,7 +79,7 @@ public class FileServerImpl implements FileServer{
     @Override
     public void getDirectory(User user) {
         Index index = FileSystemApplication.userPath.get(user);
-        if ("/".equals(index.getPath()) && JudgeUtil.isNull(index.getFileName())) {
+        if ("/".equals(index.getPath()) && Util.isNull(index.getFileName())) {
             //说明是在根目录下，输出当前根目录下的所有文件目录项
             for (Index nowIndex : root) {
                 System.out.print(nowIndex.getFileName() + " ");
@@ -84,7 +87,7 @@ public class FileServerImpl implements FileServer{
             System.out.print("\r\n");
             return;
         }
-        if (!JudgeUtil.isNull(index.getIndexFile())) {
+        if (!Util.isNull(index.getIndexFile())) {
             //说明是非根目录
             if (index.getIndexFile().getChildren().size() == 0) {
                 System.out.println("The current directory is empty！");
@@ -102,7 +105,7 @@ public class FileServerImpl implements FileServer{
                     Index childrenIndex = iterator.next();
                     //需要看下该文件是否被删除
                     int isFind = 0;
-                    if (!JudgeUtil.isNull(childrenIndex.getIndexFile())) {
+                    if (!Util.isNull(childrenIndex.getIndexFile())) {
                         if (childrenIndex.getIndexFile().getIsCatalog() ||
                                 (!childrenIndex.getIndexFile().getIsCatalog() && !childrenIndex.getIndexFile().getIsPublic())) {
                             isFind = 1;
@@ -136,10 +139,10 @@ public class FileServerImpl implements FileServer{
     public void changeDirectory(String message, User user) {
         //执行查找该目录方法
         Index index = findDirectory(message, user, 0);
-        if (JudgeUtil.isNull(index)) {
+        if (Util.isNull(index)) {
             return;
         }
-        if (!JudgeUtil.isNull(index.getIndexFile()) && !index.getIndexFile().getIsCatalog()) {
+        if (!Util.isNull(index.getIndexFile()) && !index.getIndexFile().getIsCatalog()) {
             System.out.println(index.getFileName() + " 是文件！");
             return;
         }
@@ -173,7 +176,7 @@ public class FileServerImpl implements FileServer{
         }
         //查找到某个文件
         Index index = findDirectory(message, user, 0);
-        if (!JudgeUtil.isNull(index)) {
+        if (!Util.isNull(index)) {
             if (index.getIndexFile().getIsCatalog()) {
                 //说明是一个文件夹
                 System.out.println(index.getFileName() + " is a directory！");
@@ -204,7 +207,7 @@ public class FileServerImpl implements FileServer{
         }
         //查找到某个文件
         Index index = findOpenFile(message, user);
-        if (!JudgeUtil.isNull(index)) {
+        if (!Util.isNull(index)) {
             if (index.getIndexFile().getIsCatalog()) {
                 //说明是一个文件夹
                 System.out.println(index.getFileName() + " is a directory！");
@@ -232,7 +235,7 @@ public class FileServerImpl implements FileServer{
         }
         //查找到某个文件
         Index index = findOpenFile(message, user);
-        if (!JudgeUtil.isNull(index)) {
+        if (!Util.isNull(index)) {
             if (index.getIndexFile().getIsCatalog()) {
                 //说明是一个文件夹
                 System.out.println(index.getFileName() + " is a directory！");
@@ -263,7 +266,7 @@ public class FileServerImpl implements FileServer{
         }
         //查找到某个文件
         Index index = findOpenFile(message, user);
-        if (!JudgeUtil.isNull(index)) {
+        if (!Util.isNull(index)) {
             if (index.getIndexFile().getIsCatalog()) {
                 //说明是一个文件夹
                 System.out.println(index.getFileName() + "is a directory！");
@@ -296,11 +299,11 @@ public class FileServerImpl implements FileServer{
         }
         //执行查找该目录方法
         Index index = findDirectory(message, user, 0);
-        if (JudgeUtil.isNull(index)) {
+        if (Util.isNull(index)) {
             return;
         }
         //判断是否为用户个人的目录
-        if (JudgeUtil.isNull(index.getIndexFile().getParent())) {
+        if (Util.isNull(index.getIndexFile().getParent())) {
             System.out.println("The root directory cannot be deleted！");
             return;
         }
@@ -352,7 +355,7 @@ public class FileServerImpl implements FileServer{
             }
         }
         Index index = null;
-        if (!JudgeUtil.isNull(help) && !JudgeUtil.isNull(help.getIndexFile())) {
+        if (!Util.isNull(help) && !Util.isNull(help.getIndexFile())) {
             if (help.getIndexFile().getChildren().size() == 0) {
                 System.out.println("There are no files to share at the moment！");
                 return;
@@ -370,11 +373,11 @@ public class FileServerImpl implements FileServer{
                 return;
             }
         }
-        if (!JudgeUtil.isNull(index)) {
+        if (!Util.isNull(index)) {
             //找到该文件的父目录
             index = findDirectory("cd " + index.getPath().substring(1), user, 1);
             Index userPath = FileSystemApplication.userPath.get(user);
-            if (!JudgeUtil.isNull(index) && !JudgeUtil.isNull(index.getIndexFile())) {
+            if (!Util.isNull(index) && !Util.isNull(index.getIndexFile())) {
                 if (index.getIndexFile().getChildren().size() == 0) {
                     System.out.println("The file had been deleted！");
                     return;
@@ -394,6 +397,27 @@ public class FileServerImpl implements FileServer{
             }
             userPath.getIndexFile().getChildren().add(index);
         }
+    }
+
+    @Override
+    public User login(String name, String password) {
+
+        if(Util.isStringEmpty(name)||Util.isStringEmpty(password)){
+            System.out.println("enter empty");
+            return null;
+        }
+
+        User user = mapper.getUser(name,password);
+
+        if(user!=null){
+            System.out.println("Login successfully!");
+            return user;
+        }else{
+            System.out.println("Couldn't find this account!");
+            return null;
+        }
+
+
     }
 
     private void writeFile(Index index) {
@@ -469,7 +493,7 @@ public class FileServerImpl implements FileServer{
             }
         }
         //文件时间改为最新的修改时间
-        index.getIndexFile().setModifyTime(TimeUtil.getCurrentTime());
+        index.getIndexFile().setModifyTime(Util.getCurrentTime());
         index.getIndexFile().setStatus(1);
     }
 
@@ -507,8 +531,8 @@ public class FileServerImpl implements FileServer{
         for (int i = 0; i < path.length; i++) {
             if ("..".equals(path[i])) {
                 //获取上一级目录
-                if (!JudgeUtil.isNull(index.getIndexFile())) {
-                    if (JudgeUtil.isNull(index.getIndexFile().getParent())) {
+                if (!Util.isNull(index.getIndexFile())) {
+                    if (Util.isNull(index.getIndexFile().getParent())) {
                         index.setIndexFile(null);
                         index.setFileName(null);
                         index.setPath("/");
@@ -520,17 +544,17 @@ public class FileServerImpl implements FileServer{
                 continue;
             }
             //获取当前目录下的子目录
-            if ("/".equals(index.getPath()) && JudgeUtil.isNull(index.getFileName())) {
+            if ("/".equals(index.getPath()) && Util.isNull(index.getFileName())) {
                 childDirectory = root;
             }
-            else if (!JudgeUtil.isNull(index.getIndexFile())) {
+            else if (!Util.isNull(index.getIndexFile())) {
                 //说明是非根目录
                 if (index.getIndexFile().getChildren().size() == 0) {
                     Index newDirectory = null;
                     //创建一个目录或文件
                     if (i == path.length - 1) {
                         //查看当前目录是否在根目录下创建，是则不允许
-                        if ("/".equals(index.getPath()) && JudgeUtil.isNull(index.getFileName())) {
+                        if ("/".equals(index.getPath()) && Util.isNull(index.getFileName())) {
                             System.out.println("Cannot create files in the root directory！");
                             return;
                         }
@@ -545,7 +569,7 @@ public class FileServerImpl implements FileServer{
                     else {
                         newDirectory = newDirectory(path[i], 1);
                     }
-                    if (JudgeUtil.isNull(newDirectory)) {
+                    if (Util.isNull(newDirectory)) {
                         return;
                     }
                     if ("/".equals(index.getPath())) {
@@ -577,7 +601,7 @@ public class FileServerImpl implements FileServer{
                     childDirectory = index.getIndexFile().getChildren();
                 }
             }
-            if (!JudgeUtil.isNull(childDirectory)) {
+            if (!Util.isNull(childDirectory)) {
                 boolean isChange = false;
                 for (Index child : childDirectory) {
                     if (child.getFileName().equals(path[i])) {
@@ -598,7 +622,7 @@ public class FileServerImpl implements FileServer{
                     //创建一个目录或文件
                     if (i == path.length - 1) {
                         //查看当前目录是否在根目录下创建，是则不允许
-                        if ("/".equals(index.getPath()) && JudgeUtil.isNull(index.getFileName())) {
+                        if ("/".equals(index.getPath()) && Util.isNull(index.getFileName())) {
                             System.out.println("Cannot create files in the root directory！");
                             return;
                         }
@@ -613,7 +637,7 @@ public class FileServerImpl implements FileServer{
                     else {
                         newDirectory = newDirectory(path[i], 1);
                     }
-                    if (JudgeUtil.isNull(newDirectory)) {
+                    if (Util.isNull(newDirectory)) {
                         return;
                     }
                     if ("/".equals(index.getPath())) {
@@ -657,7 +681,7 @@ public class FileServerImpl implements FileServer{
             if (type == 1) {
                 //生成一个新的目录文件，以用户名起名, 同时生成索引文件
                 IndexFile = new IndexFile(index++, null, true, true, fat.getFatBlocks()[freeLoc.get(0)], null,
-                        TimeUtil.getCurrentTime(), -1, new LinkedList<>());
+                        Util.getCurrentTime(), -1, new LinkedList<>());
             }
             else if (type == 0) {
                 Scanner scanner = new Scanner(System.in);
@@ -684,7 +708,7 @@ public class FileServerImpl implements FileServer{
                 }
 
                 IndexFile = new IndexFile(index++, null, false, b, fat.getFatBlocks()[freeLoc.get(0)], null,
-                        TimeUtil.getCurrentTime(), 0, null);
+                        Util.getCurrentTime(), 0, null);
             }
             return new Index(IndexFile, fileName, null);
         }
@@ -735,7 +759,7 @@ public class FileServerImpl implements FileServer{
             System.out.println("The Shared folder is not operational！");
             return false;
         }
-        if ("/".equals(userPath.getPath()) && JudgeUtil.isStringEmpty(userPath.getFileName())) {
+        if ("/".equals(userPath.getPath()) && Util.isStringEmpty(userPath.getFileName())) {
             System.out.println("The Root folder is not operational！");
             return false;
         }
@@ -776,8 +800,8 @@ public class FileServerImpl implements FileServer{
         for (int i = 0; i < path.length; i++) {
             if ("..".equals(path[i])) {
                 //获取上一级目录
-                if (!JudgeUtil.isNull(index.getIndexFile())) {
-                    if (JudgeUtil.isNull(index.getIndexFile().getParent())) {
+                if (!Util.isNull(index.getIndexFile())) {
+                    if (Util.isNull(index.getIndexFile().getParent())) {
                         index.setIndexFile(null);
                         index.setFileName(null);
                         index.setPath("/");
@@ -790,11 +814,11 @@ public class FileServerImpl implements FileServer{
             }
             int isRoot = 0;
             //获取当前目录下的子目录
-            if ("/".equals(index.getPath()) && JudgeUtil.isNull(index.getFileName())) {
+            if ("/".equals(index.getPath()) && Util.isNull(index.getFileName())) {
                 childDirectory = root;
                 isRoot = 1;
             }
-            else if (!JudgeUtil.isNull(index.getIndexFile())) {
+            else if (!Util.isNull(index.getIndexFile())) {
                 //说明是非根目录
                 if (index.getIndexFile().getChildren().size() == 0) {
                     System.out.println(index.getFileName() + " 为空！");
@@ -804,7 +828,7 @@ public class FileServerImpl implements FileServer{
                     childDirectory = index.getIndexFile().getChildren();
                 }
             }
-            if (!JudgeUtil.isNull(childDirectory)) {
+            if (!Util.isNull(childDirectory)) {
                 boolean isChange = false;
                 for (Index child : childDirectory) {
                     if (child.getFileName().equals(path[i])) {

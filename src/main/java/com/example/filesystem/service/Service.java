@@ -1,14 +1,14 @@
-package com.example.filesystem;
+package com.example.filesystem.service;
 
 import com.example.filesystem.model.User;
-import org.springframework.stereotype.Service;
+
 
 /**
  * @Author: rachel-lly
  * @Date: 2021-06-11 21:44
  */
 
-public interface FileServer {
+public interface Service {
 
     void initDirectory(String directoryName);
     void getDirectory(User user);
@@ -17,19 +17,14 @@ public interface FileServer {
 
 
     void createFile(String message, User user);
-
     void openFile(String message, User user);
-
     void closeFile(String message, User user);
-
     void readFile(String message, User user);
-
-
     void writeFile(String message, User user);
-
-
     void deleteFile(String message, User user);
-
-
     void linkFile(String message, User user);
+
+
+    User login(String name, String password);
+
 }

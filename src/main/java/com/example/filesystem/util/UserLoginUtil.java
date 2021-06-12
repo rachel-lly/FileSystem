@@ -1,6 +1,6 @@
 package com.example.filesystem.util;
 
-import com.example.filesystem.UserServer;
+import com.example.filesystem.service.Service;
 import com.example.filesystem.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,12 +25,12 @@ public class UserLoginUtil {
     private static UserLoginUtil userLoginUtil;
 
     @Autowired
-    private UserServer userServer;
+    private Service service;
 
     @PostConstruct
     public void init() {
         userLoginUtil = this;
-        userLoginUtil.userServer = this.userServer;
+        userLoginUtil.service = this.service;
     }
 
 
@@ -45,7 +45,7 @@ public class UserLoginUtil {
             username = scanner.nextLine();
             System.out.print("password:");
             password = scanner.nextLine();
-            if (JudgeUtil.isStringEmpty(username) || JudgeUtil.isStringEmpty(password)) {
+            if (Util.isStringEmpty(username) || Util.isStringEmpty(password)) {
                 System.out.println("请填写完整账号信息");
             }
             else {

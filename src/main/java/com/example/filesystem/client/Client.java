@@ -1,5 +1,6 @@
-package com.example.filesystem;
+package com.example.filesystem.client;
 
+import com.example.filesystem.service.MessageHandle;
 import com.example.filesystem.model.User;
 import com.example.filesystem.util.UserLoginUtil;
 
