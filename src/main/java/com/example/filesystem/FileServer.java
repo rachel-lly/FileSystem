@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * @Author: rachel-lly
  * @Date: 2021-06-11 21:44
  */
-@Service
+
 public interface FileServer {
 
     void initDirectory(String directoryName);

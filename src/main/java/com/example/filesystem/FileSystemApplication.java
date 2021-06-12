@@ -7,9 +7,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -53,7 +50,7 @@ public class FileSystemApplication implements CommandLineRunner {
                                 + userPath.get(user).getFileName() + "]$");
                     }
                 }
-                //用户输入
+
                 String message = scanner.nextLine();
                 if ("logout".equals(message)) {
                     System.out.println("Exit successfully");

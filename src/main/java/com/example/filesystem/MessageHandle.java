@@ -4,6 +4,7 @@ import com.example.filesystem.model.User;
 import com.example.filesystem.util.JudgeUtil;
 import com.example.filesystem.util.UserLoginUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,8 +18,10 @@ public class MessageHandle {
     private static final List<User> loginUserList = new ArrayList<>();
 
 
+    @Autowired
     private FileServer fileService;
 
+    @Autowired
     private UserServer userServer;
 
     private static MessageHandle messageHandle;
@@ -69,8 +72,6 @@ public class MessageHandle {
 
             user = messageHandle.userServer.login(username, password);
             if (!JudgeUtil.isNull(user)) {
-                // TODO: 2021/6/11 文件处理
-                //登录成功后自动初始化文件
                 messageHandle.fileService.initDirectory(username);
                 addUser(user);
                 break;

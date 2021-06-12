@@ -18,7 +18,7 @@ import java.util.*;
 @Component
 public class UserLoginUtil {
 
-    private static final List<User> loginUserList = new ArrayList<>();
+
 
     public static Map<SocketChannel, User> loginMap = new HashMap<>();
 
@@ -33,21 +33,7 @@ public class UserLoginUtil {
         userLoginUtil.userServer = this.userServer;
     }
 
-    public static void addUser(User user) {
-        if (!JudgeUtil.isNull(user)) {
-            loginUserList.add(user);
-        }
-    }
 
-    public static void removeUser(User user) {
-        if (!JudgeUtil.isNull(user)) {
-            loginUserList.remove(user);
-        }
-    }
-
-    public static List<User> getLoginUserList() {
-        return loginUserList;
-    }
 
     public static User userLogin(ByteBuffer byteBuffer, SocketChannel client) {
         byteBuffer.clear();
@@ -80,20 +66,5 @@ public class UserLoginUtil {
         return user;
     }
 
-    public static User login() {
-        String username, password;
-        User user;
-        while (true) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("username:");
-            username = scanner.nextLine();
-            System.out.print("password:");
-            password = scanner.nextLine();
-            user = userLoginUtil.userServer.login(username, password);
-            if (!JudgeUtil.isNull(user)) {
-                break;
-            }
-        }
-        return user;
-    }
+
 }
