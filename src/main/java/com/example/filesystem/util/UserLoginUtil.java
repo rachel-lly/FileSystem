@@ -46,7 +46,7 @@ public class UserLoginUtil {
             System.out.print("password:");
             password = scanner.nextLine();
             if (Util.isStringEmpty(username) || Util.isStringEmpty(password)) {
-                System.out.println("请填写完整账号信息");
+                System.out.println("username or password is empty");
             }
             else {
                 break;
@@ -61,7 +61,7 @@ public class UserLoginUtil {
             client.write(byteBuffer);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("IO异常");
+            System.out.println("IO exception");
         }
         return user;
     }

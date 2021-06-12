@@ -1,11 +1,9 @@
 package com.example.filesystem.service;
 
-
 import com.example.filesystem.FileSystemApplication;
 import com.example.filesystem.mapper.UserMapper;
 import com.example.filesystem.model.*;
 import com.example.filesystem.util.Util;
-
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -45,11 +43,11 @@ public class ServiceImpl implements Service {
             fat.getFatBlocks()[i] =  new FatBlock(i,-1);
         }
 
-        //在根目录下创建一个共享的文件夹
+
         Integer freePos = 0;
-        //修改位示图状态
+
         bitMap.getFBlocks()[freePos / COLUMN][freePos % COLUMN] = true;
-        //在根目录下生成一个新的目录文件，以用户名起名, 同时生成索引文件
+
         IndexFile indexFile = new IndexFile(index++, "/", true, true, fat.getFatBlocks()[freePos], null,
                 Util.getCurrentTime(), -1, new LinkedList<>());
         root.add(new Index(indexFile, "Share", "/"));
@@ -191,7 +189,7 @@ public class ServiceImpl implements Service {
                         FileSystemApplication.userPath.put(user, index.getIndexFile().getParent());
                     }
                     openFile.add(index);
-                    System.out.println("Opening " + index.getFileName() + " Successfully！");
+                    System.out.println("Open " + index.getFileName() + " Successfully！");
                 }
                 else {
                     System.out.println("Failed to open " + index.getFileName() + ", there are users writing now！");
@@ -216,7 +214,7 @@ public class ServiceImpl implements Service {
                 if (index.getIndexFile().getStatus() != 2) {
                     index.getIndexFile().setStatus(0);
                     openFile.remove(index);
-                    System.out.println("Closing " + index.getFileName() + " Successfully！");
+                    System.out.println("Close " + index.getFileName() + " Successfully！");
                 }
                 else {
                     System.out.println("Failed to close " + index.getFileName() + ", there are users writing now！");
@@ -283,7 +281,7 @@ public class ServiceImpl implements Service {
                         outPutFileContent(index);
                         break;
                     case 2:
-                        System.out.println("Failed to read " + index.getFileName() + ", there are users writing now！");
+                        System.out.println("Fail to read " + index.getFileName() + ", there are users writing now！");
                 }
             }
         }
@@ -400,6 +398,23 @@ public class ServiceImpl implements Service {
     }
 
     @Override
+    public void showBitMap() {
+        System.out.println();
+        for(int i=0;i<COLUMN;i++){
+            for(int j=0;j<LINE;j++){
+                if(bitMap.getFBlocks()[i][j]){
+                    System.out.print("1\t");
+                }else{
+                    System.out.print("0\t");
+                }
+
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    @Override
     public User login(String name, String password) {
 
         if(Util.isStringEmpty(name)||Util.isStringEmpty(password)){
@@ -413,7 +428,7 @@ public class ServiceImpl implements Service {
             System.out.println("Login successfully!");
             return user;
         }else{
-            System.out.println("Couldn't find this account!");
+            System.out.println("userName or password is wrong!Please enter again!");
             return null;
         }
 

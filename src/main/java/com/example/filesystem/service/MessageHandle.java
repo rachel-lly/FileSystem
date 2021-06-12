@@ -5,12 +5,12 @@ import com.example.filesystem.util.UserLoginUtil;
 import com.example.filesystem.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.PostConstruct;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 @Component
 public class MessageHandle {
 
@@ -41,14 +41,14 @@ public class MessageHandle {
     public static void clientMessage(String receiveMessage, SocketChannel client) {
 
         if (Util.isStringEmpty(receiveMessage)) {
-            System.out.println("服务端发送空消息");
+            System.out.println("send empty message!");
             return;
         }
         if (receiveMessage.equals("loginSuccess")) {
-            System.out.println("登录成功！请按回车键进入根目录！");
+            System.out.println("Login successfully！enter ENTER to in root directory！");
         }
         if (receiveMessage.equals("loginFail")) {
-            System.out.println("登录失败！请按回车键重新登陆！");
+            System.out.println("Login fail！enter ENTER to login again！");
             UserLoginUtil.loginMap.remove(client);
         }
 
@@ -110,6 +110,9 @@ public class MessageHandle {
         }
         else if (message.matches("link .+")) {
             messageHandle.service.linkFile(message, user);
+        }
+        else if (message.matches("bitmap")) {
+            messageHandle.service.showBitMap();
         }
         else {
             System.out.println("Unknown command " + message);

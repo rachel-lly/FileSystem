@@ -25,7 +25,7 @@ public class IndexFile {
 
     private Integer status;//文件状态 0--关闭 1--打开 2--有用户正在写 -1--文目录
 
-    private LinkedList<Index> children;//文件目录才有子目录
+    private LinkedList<Index> children;//文件目录有子目录
 
     public IndexFile(Integer index, String path, Boolean isCatalog, Boolean isPublic,
                      FatBlock firstBlock, Index parent, String modifyTime,

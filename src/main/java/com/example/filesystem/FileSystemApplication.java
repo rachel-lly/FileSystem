@@ -54,7 +54,7 @@ public class FileSystemApplication implements CommandLineRunner {
 
                 String message = scanner.nextLine();
                 if ("logout".equals(message)) {
-                    System.out.println("Exit successfully");
+                    System.out.println("Exit successfully!");
                     MessageHandle.getLoginUserList().clear();
                     break;
                 }

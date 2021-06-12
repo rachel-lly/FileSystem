@@ -3,7 +3,6 @@ package com.example.filesystem.client;
 import com.example.filesystem.service.MessageHandle;
 import com.example.filesystem.model.User;
 import com.example.filesystem.util.UserLoginUtil;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -54,7 +53,7 @@ public class Client {
                                 while (true) {
                                     try {
                                         if (UserLoginUtil.loginMap.isEmpty()) {
-                                            //说明刚刚进来，需要登录，调用登录方法
+
                                             User user = UserLoginUtil.userLogin(byteBuffer, client);
                                             UserLoginUtil.loginMap.put(client, user);
                                         }else {
@@ -79,7 +78,7 @@ public class Client {
                         int count = client.read(readBuffer);
                         if (count > 0) {
                             String receiveMessage = new String(readBuffer.array(), 0, count);
-                            //对收到的消息进行处理
+
                             MessageHandle.clientMessage(receiveMessage, client);
                         }
                     }

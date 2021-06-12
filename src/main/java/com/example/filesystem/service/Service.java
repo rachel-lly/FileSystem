@@ -24,6 +24,8 @@ public interface Service {
     void deleteFile(String message, User user);
     void linkFile(String message, User user);
 
+    void showBitMap();
+
 
     User login(String name, String password);
 

@@ -13,10 +13,7 @@ public class BitMap {
     private Integer column;
     private Boolean[][] fBlocks;
 
-    /**
-    * @Description: 初始化位示图
-    * @param：[line, column]
-    */
+
     public BitMap(Integer line, Integer column) {
         this.line = line;
         this.column = column;
