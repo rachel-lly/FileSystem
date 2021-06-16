@@ -76,15 +76,12 @@ public class MessageHandle {
 
     public static void handleMessage(String message, User user) {
         if (Util.isStringEmpty(message)) {
-            //消息为空直接返回
             return;
         }
         if ("dir".equals(message)) {
-            //查看当前路径下的所有文件目录
             messageHandle.service.getDirectory(user);
         }
         else if (message.matches("cd .+")) {
-            //说明是想更换目录
             messageHandle.service.changeDirectory(message, user);
         }
         else if (message.matches("create .+")) {

@@ -24,13 +24,13 @@ public class FileSystemApplication implements CommandLineRunner {
     public static Map<User, Index> userPath = new HashMap<>();
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args){
         while (true) {
             User user;
             //判断用户是否已经登录
             if (MessageHandle.getLoginUserList().isEmpty()) {
                 user = MessageHandle.login();
-                userPath.put(user, new Index(null, null, "/"));
+                userPath.put(user, new Index(null, null, "\\"));
             }
             else {
                 user = MessageHandle.getLoginUserList().get(0);
@@ -39,16 +39,14 @@ public class FileSystemApplication implements CommandLineRunner {
             while (true) {
                 //输出当前路径
                 if (Util.isStringEmpty(userPath.get(user).getFileName())) {
-                    System.out.print("[" + user.getName() + "@" + "localhost " + userPath.get(user).getPath() + "]$");
+                    System.out.print("C:"+"\\"+"FileSystem" + userPath.get(user).getPath() + ">");
                 }
                 else {
-                    if ("/".equals(userPath.get(user).getPath())) {
-                        System.out.print("[" + user.getName() + "@" + "localhost " + userPath.get(user).getPath()
-                                + userPath.get(user).getFileName() + "]$");
+                    if ("\\".equals(userPath.get(user).getPath())) {
+                        System.out.print("C:"+"\\"+"FileSystem" + userPath.get(user).getPath() + userPath.get(user).getFileName() + ">");
                     }
                     else {
-                        System.out.print("[" + user.getName() + "@" + "localhost " + userPath.get(user).getPath() + "/"
-                                + userPath.get(user).getFileName() + "]$");
+                        System.out.print("C:"+"\\"+"FileSystem" + userPath.get(user).getPath() + "\\" + userPath.get(user).getFileName() + ">");
                     }
                 }
 

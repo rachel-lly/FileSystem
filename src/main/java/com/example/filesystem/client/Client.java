@@ -14,7 +14,6 @@ import java.nio.channels.SocketChannel;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 public class Client {
@@ -40,14 +39,14 @@ public class Client {
 
                 for (SelectionKey selectionKey : keySet) {
                     if (selectionKey.isConnectable()) {
-                        //表明已经与服务器建立好连接
+
                         SocketChannel client = (SocketChannel) selectionKey.channel();
-                        //连接是否正在进行
+
                         if (client.isConnectionPending()) {
                             client.finishConnect();
                             ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 
-                            //开启线程池,用于用户的输入（阻塞的）
+
                             ExecutorService executorService = newSingleThreadExecutor(Executors.defaultThreadFactory());
                             executorService.submit(() ->{
                                 while (true) {
