@@ -41,7 +41,7 @@ public class MessageHandle {
     public static void clientMessage(String receiveMessage, SocketChannel client) {
 
         if (Util.isStringEmpty(receiveMessage)) {
-            System.out.println("send empty message!");
+            System.out.println("Send empty message!");
             return;
         }
         if (receiveMessage.equals("loginSuccess")) {
@@ -87,20 +87,20 @@ public class MessageHandle {
         else if (message.matches("create .+")) {
             messageHandle.service.createFile(message, user);
         }
+        else if (message.matches("delete .+")) {
+            messageHandle.service.deleteFile(message, user);
+        }
         else if (message.matches("open .+")) {
             messageHandle.service.openFile(message, user);
+        }
+        else if (message.matches("close .+")) {
+            messageHandle.service.closeFile(message, user);
         }
         else if (message.matches("read .+")) {
             messageHandle.service.readFile(message, user);
         }
         else if (message.matches("write .+")) {
             messageHandle.service.writeFile(message, user);
-        }
-        else if (message.matches("close .+")) {
-            messageHandle.service.closeFile(message, user);
-        }
-        else if (message.matches("delete .+")) {
-            messageHandle.service.deleteFile(message, user);
         }
         else if (message.matches("mkdir .+")) {
             messageHandle.service.createDirectory(message, user);
@@ -112,7 +112,7 @@ public class MessageHandle {
             messageHandle.service.showBitMap();
         }
         else {
-            System.out.println("Unknown command " + message);
+            System.out.println("Invalid command " + message);
         }
     }
 
