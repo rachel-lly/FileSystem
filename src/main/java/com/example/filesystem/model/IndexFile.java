@@ -20,19 +20,19 @@ public class IndexFile {
 
     private FatBlock firstBlock;
 
-    private IndexFCBRow parent;//父目录
+    private FCB parent;//父目录
 
     private String modifyTime;//最后修改时间
 
     private Integer status;//文件状态 0--关闭 1--打开 2--有用户正在写 -1--文目录
 
-    private LinkedList<IndexFCBRow> children;//子目录
+    private LinkedList<FCB> children;//子目录
 
 
 
     public IndexFile(Integer index, String path, Boolean isCatalog, Boolean isPublic,
-                     FatBlock firstBlock, IndexFCBRow parent, String modifyTime,
-                     Integer status, LinkedList<IndexFCBRow> children) {
+                     FatBlock firstBlock, FCB parent, String modifyTime,
+                     Integer status, LinkedList<FCB> children) {
         this.index = index;
         this.path = path;
         this.isCatalog = isCatalog;

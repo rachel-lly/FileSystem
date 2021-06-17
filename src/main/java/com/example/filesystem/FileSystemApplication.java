@@ -1,6 +1,6 @@
 package com.example.filesystem;
 
-import com.example.filesystem.model.IndexFCBRow;
+import com.example.filesystem.model.FCB;
 import com.example.filesystem.model.User;
 import com.example.filesystem.service.MessageHandle;
 import com.example.filesystem.util.Util;
@@ -21,7 +21,7 @@ public class FileSystemApplication implements CommandLineRunner {
     }
 
     //存储用户当前所在的目录
-    public static Map<User, IndexFCBRow> userPath = new HashMap<>();
+    public static Map<User, FCB> userPath = new HashMap<>();
 
     @Override
     public void run(String... args){
@@ -30,7 +30,7 @@ public class FileSystemApplication implements CommandLineRunner {
             //判断用户是否已经登录
             if (MessageHandle.getLoginUserList().isEmpty()) {
                 user = MessageHandle.login();
-                userPath.put(user, new IndexFCBRow(null, null, "\\"));
+                userPath.put(user, new FCB(null, null, "\\"));
 
                 System.out.println("\n\t-------------- FileSystem 的常用命令-------------");
                 System.out.println("\tcd      改变当前目录（.. 返回上一级）");
