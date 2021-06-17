@@ -78,7 +78,7 @@ public class ServiceImpl implements Service {
 
         System.out.println();
         if ("\\".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
-            //根目录
+
 
             for (IndexFile nowIndexFile : root) {
 
@@ -95,7 +95,7 @@ public class ServiceImpl implements Service {
         if (!Util.isNull(indexFile.getFSFile())) {
 
             if (indexFile.getFSFile().getChildren().size() == 0) {
-                System.out.println("The current directory is empty！");
+                System.out.println("The current directory is empty!");
             }else {
                 Iterator<IndexFile> iterator = indexFile.getFSFile().getChildren().iterator();
                 IndexFile help = null;
@@ -128,7 +128,7 @@ public class ServiceImpl implements Service {
                     }
                 }
                 if (indexFile.getFSFile().getChildren().size() == 0) {
-                    System.out.println("The filefolder is empty！");
+                    System.out.println("The filefolder is empty!");
                     return;
                 }
 
@@ -202,9 +202,9 @@ public class ServiceImpl implements Service {
                         FileSystemApplication.userPath.put(user, indexFile.getFSFile().getParent());
                     }
                     openFile.add(indexFile);
-                    System.out.println("Open " + indexFile.getFileName() + " Successfully！");
+                    System.out.println("Open " + indexFile.getFileName() + " Successfully!");
                 }else {
-                    System.out.println("Failed to open " + indexFile.getFileName() + ", it's written by other user！");
+                    System.out.println("Failed to open " + indexFile.getFileName() + ", it's written by other user!");
                 }
             }
         }
@@ -218,15 +218,15 @@ public class ServiceImpl implements Service {
         IndexFile indexFile = findOpenFile(message, user);
         if (!Util.isNull(indexFile)) {
             if (indexFile.getFSFile().getIsCatalog()) {
-                System.out.println(indexFile.getFileName() + " is directory！");
+                System.out.println(indexFile.getFileName() + " is directory!");
             }
             else {
                 if (indexFile.getFSFile().getStatus() != 2) {
                     indexFile.getFSFile().setStatus(0);
                     openFile.remove(indexFile);
-                    System.out.println("Close " + indexFile.getFileName() + " Successfully！");
+                    System.out.println("Close " + indexFile.getFileName() + " Successfully!");
                 }else {
-                    System.out.println("Failed to close " + indexFile.getFileName() + ", it's written by other user！");
+                    System.out.println("Failed to close " + indexFile.getFileName() + ", it's written by other user!");
                 }
             }
         }
@@ -244,18 +244,18 @@ public class ServiceImpl implements Service {
         IndexFile indexFile = findOpenFile(message, user);
         if (!Util.isNull(indexFile)) {
             if (indexFile.getFSFile().getIsCatalog()) {
-                System.out.println(indexFile.getFileName() + " is directory！");
+                System.out.println(indexFile.getFileName() + " is directory!");
             }
             else {
                 switch (indexFile.getFSFile().getStatus()) {
                     case 0:
-                        System.out.println("Please open file first！");
+                        System.out.println("Please open file first!");
                         break;
                     case 1:
                         printFileContent(indexFile);
                         break;
                     case 2:
-                        System.out.println("Failed to read " + indexFile.getFileName() + ", it's written by other user！");
+                        System.out.println("Failed to read " + indexFile.getFileName() + ", it's written by other user!");
                 }
             }
         }
@@ -269,16 +269,16 @@ public class ServiceImpl implements Service {
         if (!isLegal(user)) {
             return;
         }
-        //查找到某个文件
+
         IndexFile indexFile = findOpenFile(message, user);
         if (!Util.isNull(indexFile)) {
             if (indexFile.getFSFile().getIsCatalog()) {
-                System.out.println(indexFile.getFileName() + "is directory！");
+                System.out.println(indexFile.getFileName() + "is directory!");
             }
             else {
                 switch (indexFile.getFSFile().getStatus()) {
                     case 0:
-                        System.out.println("Please open the file firstly！");
+                        System.out.println("Please open the file firstly!");
                         break;
                     case 1:
                         indexFile.getFSFile().setStatus(2);
@@ -286,7 +286,7 @@ public class ServiceImpl implements Service {
                         printFileContent(indexFile);
                         break;
                     case 2:
-                        System.out.println("Fail to read " + indexFile.getFileName() + ", it's written by other user！");
+                        System.out.println("Fail to read " + indexFile.getFileName() + ", it's written by other user!");
                 }
             }
         }
@@ -318,13 +318,12 @@ public class ServiceImpl implements Service {
 
         if (FileSystemApplication.userPath.get(user).getPath().equals(indexFile.getPath()) &&
                 FileSystemApplication.userPath.get(user).getFileName().equals(indexFile.getFileName())) {
-            //更新目录
+
             FileSystemApplication.userPath.remove(user);
             FileSystemApplication.userPath.put(user, indexFile.getFSFile().getParent());
         }
         indexFile.getFSFile().getParent().getFSFile().getChildren().remove(indexFile);
 
-        //若为共享文件，则需要将其从共享文件夹中删除
         if (indexFile.getFSFile().getIsPublic()) {
             IndexFile help = null;
             for (IndexFile child : root) {
@@ -349,7 +348,7 @@ public class ServiceImpl implements Service {
         if (!isLegal(user)) {
             return;
         }
-        //修改内容,查找Share目录中的文件名进行匹配
+
         String fileName = message.split(" ")[1];
         IndexFile help = null;
         for (IndexFile child : root) {
@@ -361,7 +360,7 @@ public class ServiceImpl implements Service {
         IndexFile indexFile = null;
         if (!Util.isNull(help) && !Util.isNull(help.getFSFile())) {
             if (help.getFSFile().getChildren().size() == 0) {
-                System.out.println("There are no files！");
+                System.out.println("There are no files!");
                 return;
             }
             int isFind = 0;
@@ -383,7 +382,7 @@ public class ServiceImpl implements Service {
             IndexFile userPath = FileSystemApplication.userPath.get(user);
             if (!Util.isNull(indexFile) && !Util.isNull(indexFile.getFSFile())) {
                 if (indexFile.getFSFile().getChildren().size() == 0) {
-                    System.out.println("The file had been deleted！");
+                    System.out.println("The file had been deleted!");
                     return;
                 }
                 int isFind = 0;
@@ -395,7 +394,7 @@ public class ServiceImpl implements Service {
                     }
                 }
                 if (isFind == 0) {
-                    System.out.println("The file had been deleted！");
+                    System.out.println("The file had been deleted!");
                     return;
                 }
             }
@@ -456,7 +455,7 @@ public class ServiceImpl implements Service {
             result.append(content);
         }
 
-        //若文件超范围，则存放到额外的盘块，先找到最后盘块，看剩量是否足够
+
         FatBlock fatBlock = indexFile.getFSFile().getFirstBlock();
         Integer number;
         int over = 0;
@@ -489,15 +488,15 @@ public class ServiceImpl implements Service {
         }
 
         if (result.length() > leftover) {
-            //分配额外盘块
+
             int num = (result.length() - leftover) / BLOCKSIZE + 1;
-            //剩下的文件长度
+
             int length = result.length() - leftover;
             for (int i = 0; i < num; i++) {
 
                 List<Integer> freeLoc = findDatFreePos(1);
                 if (freeLoc.size() != 0) {
-                    //修改位示图
+
                     Integer place = freeLoc.get(0);
                     bitMap.getFBlocks()[place / COLUMN][place % COLUMN] = true;
                     fatBlock.setNextBlockId(place);
@@ -537,7 +536,7 @@ public class ServiceImpl implements Service {
                 over = 1;
             }
             else {
-                //获取下一个文件分配表项
+
                 Integer next = fatBlock.getNextBlockId();
                 fatBlock = fat.getFatBlocks()[next];
             }
@@ -557,11 +556,11 @@ public class ServiceImpl implements Service {
         IndexFile indexFile = new IndexFile(userPath.getFSFile(), userPath.getFileName(), userPath.getPath());
 
         List<IndexFile> childDirectory = null;
-        //校验目录是否存在，存在则跳转
+
         for (int i = 0; i < path.length; i++) {
 
             if ("..".equals(path[i])) {
-                //获取上一级目录
+
                 if (!Util.isNull(indexFile.getFSFile())){
 
                     if (Util.isNull(indexFile.getFSFile().getParent())) {
@@ -576,26 +575,26 @@ public class ServiceImpl implements Service {
                 continue;
             }
 
-            //获取当前目录下的子目录
+
             if ("\\".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
                 childDirectory = root;
             }else if (!Util.isNull(indexFile.getFSFile())) {
-                //说明是非根目录
+
                 if (indexFile.getFSFile().getChildren().size() == 0) {
                     IndexFile newDirectory = null;
-                    //创建一个目录或文件
+
                     if (i == path.length - 1) {
-                        //查看当前目录是否在根目录下创建，是则不允许
+
                         if ("/".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
-                            System.out.println("Can't create files in the root！");
+                            System.out.println("Can't create files in the root!");
                             return;
                         }
-                        //在Share文件夹下不可进行创建文件（夹）操作
+
                         if ("\\".equals(indexFile.getPath()) && "share".equals(indexFile.getFileName())) {
-                            System.out.println("Can't create files in the share！");
+                            System.out.println("Can't create files in the share!");
                             return;
                         }
-                        //说明此时已经是最后一个位置，可能创建的是文件或者文件夹，根据type来决定
+
                         newDirectory = newDirectory(path[i], type);
                     }else {
                         newDirectory = newDirectory(path[i], 1);
@@ -619,11 +618,11 @@ public class ServiceImpl implements Service {
 
 
 
-                    //更换当前目录
+
                     if (type != 0 || i != path.length - 1) {
                         indexFile = newDirectory;
                     }
-                    //如果是想要的共享文件，则将其放置到Share目录下
+
                     if (!newDirectory.getFSFile().getIsCatalog() && newDirectory.getFSFile().getIsPublic()) {
                         for (IndexFile root : root) {
                             if ("share".equals(root.getFileName())) {
@@ -646,11 +645,11 @@ public class ServiceImpl implements Service {
                 for (IndexFile child : childDirectory) {
                     if (child.getFileName().equals(path[i])) {
                         if (i == path.length - 1) {
-                            //说明此时已经是最后一个位置，此时文件或文件夹重名了
-                            System.out.println(child.getFileName() + " has existed！");
+
+                            System.out.println(child.getFileName() + " has existed!");
                             return;
                         }
-                        //说明该目录存在，则更新当前目录
+
                         indexFile = child;
                         isChange = true;
                         break;
@@ -659,21 +658,21 @@ public class ServiceImpl implements Service {
 
 
                 if (!isChange) {
-                    //说明当前目录不存在要查找的，需要新创建一个目录
+
                     IndexFile newDirectory = null;
-                    //创建一个目录或文件
+
                     if (i == path.length - 1) {
-                        //查看当前目录是否在根目录下创建，是则不允许
+
                         if ("\\".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
-                            System.out.println("Can't create files in the root！");
+                            System.out.println("Can't create files in the root!");
                             return;
                         }
-                        //在Share文件夹下不可进行创建文件（夹）操作
+
                         if ("\\".equals(indexFile.getPath()) && "share".equals(indexFile.getFileName())) {
-                            System.out.println("Can't create files in the share！");
+                            System.out.println("Can't create files in the share!");
                             return;
                         }
-                        //说明此时已经是最后一个位置，可能创建的是文件或者文件夹，根据type来决定
+
                         newDirectory = newDirectory(path[i], type);
                     }else {
                         newDirectory = newDirectory(path[i], 1);
@@ -712,28 +711,27 @@ public class ServiceImpl implements Service {
                 }
             }
         }
-        //更新用户当前目录
+
         FileSystemApplication.userPath.remove(user);
         FileSystemApplication.userPath.put(user, indexFile);
     }
 
     private IndexFile newDirectory(String fileName, Integer type) {
-        //先顺序查找位示图中空闲的位置
+
         List<Integer> freeLoc = findDatFreePos(1);
         if (freeLoc.size() != 0) {
-            //一开始创建目录或文件只需要占用一个盘块
-            //修改位示图状态
+
             Integer place = freeLoc.get(0);
             bitMap.getFBlocks()[place / COLUMN][place % COLUMN] = true;
             FSFile FSFile = null;
             if (type == 1) {
-                //生成一个新的目录文件，以用户名起名, 同时生成索引文件
+
                 FSFile = new FSFile(index++, null, true, true, fat.getFatBlocks()[freeLoc.get(0)], null,
                         Util.getCurrentTime(), -1, new LinkedList<>());
             }
             else if (type == 0) {
                 Scanner scanner = new Scanner(System.in);
-                String choice = null;
+                String choice;
                 while (true) {
                     System.out.println();
                     System.out.println("Please select permissions：0-private  1-public");
@@ -772,7 +770,7 @@ public class ServiceImpl implements Service {
         for (IndexFile indexFile : openFile) {
             String[] fileName = filePath.split("\\\\");
             if (fileName[fileName.length - 1].equals(indexFile.getFileName())) {
-                //比较下路径
+
                 String path;
                 if (!"\\".equals(userPath.getPath())) {
                     path = userPath.getPath() + "\\" + userPath.getFileName();
@@ -805,11 +803,11 @@ public class ServiceImpl implements Service {
     private Boolean isLegal(User user) {
         IndexFile userPath = FileSystemApplication.userPath.get(user);
         if ("share".equals(userPath.getFileName()) && "\\".equals(userPath.getPath())) {
-            System.out.println("The share isn't operational！");
+            System.out.println("The share isn't operational!");
             return false;
         }
         if ("\\".equals(userPath.getPath()) && Util.isStringEmpty(userPath.getFileName())) {
-            System.out.println("The root isn't operational！");
+            System.out.println("The root isn't operational!");
             return false;
         }
         return true;
@@ -817,11 +815,11 @@ public class ServiceImpl implements Service {
 
     private List<Integer> findDatFreePos(Integer num) {
         List<Integer> freePos = new ArrayList<>();
-        //使用顺序查找法
+
         for (int i = 0; i < LINE; i++) {
             for (int j = 0; j < COLUMN; j++) {
                 if (!bitMap.getFBlocks()[i][j]) {
-                    //说明没被使用过
+
                     freePos.add(LINE * i + j);
                     num--;
                     if (num == 0) {
@@ -845,10 +843,10 @@ public class ServiceImpl implements Service {
         }
         IndexFile indexFile = new IndexFile(userPath.getFSFile(), userPath.getFileName(), userPath.getPath());
         List<IndexFile> childDirectory = null;
-        //校验欲查找的目录是否存在，存在则一级一级跳转
+
         for (int i = 0; i < path.length; i++) {
             if ("..".equals(path[i])) {
-                //获取上一级目录
+
                 if (!Util.isNull(indexFile.getFSFile())) {
                     if (Util.isNull(indexFile.getFSFile().getParent())) {
                         indexFile.setFSFile(null);
@@ -862,15 +860,15 @@ public class ServiceImpl implements Service {
                 continue;
             }
             int isRoot = 0;
-            //获取当前目录下的子目录
+
             if ("\\".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
                 childDirectory = root;
                 isRoot = 1;
             }
             else if (!Util.isNull(indexFile.getFSFile())) {
-                //说明是非根目录
+
                 if (indexFile.getFSFile().getChildren().size() == 0) {
-                    System.out.println(indexFile.getFileName() + " is empty！");
+                    System.out.println(indexFile.getFileName() + " is empty!");
                     return null;
                 }
                 else {
@@ -883,11 +881,11 @@ public class ServiceImpl implements Service {
                     if (child.getFileName().equals(path[i])) {
                         if (isRoot == 1) {
                             if (!user.getName().equals(path[i]) && !"share".equals(path[i]) && type == 0) {
-                                System.out.println("You haven't permission to visit the file folder！");
+                                System.out.println("You haven't permission to visit the file folder!");
                                 return null;
                             }
                         }
-                        //说明该目录存在，则更新当前目录
+
                         if (child.getFSFile().getIsCatalog()) {
                             indexFile = child;
                             isChange = true;
@@ -895,7 +893,7 @@ public class ServiceImpl implements Service {
                         }
                         else {
                             if (i != path.length - 1) {
-                                System.out.println(child.getFileName() + " is file！");
+                                System.out.println(child.getFileName() + " is file!");
                                 return null;
                             }
                             return child;
@@ -903,7 +901,7 @@ public class ServiceImpl implements Service {
                     }
                 }
                 if (!isChange) {
-                    System.out.println("Not exist " + path[i] + "！");
+                    System.out.println("Not exist " + path[i] + "!");
                     return null;
                 }
             }
@@ -922,13 +920,13 @@ public class ServiceImpl implements Service {
         int over = 0;
 
         do {
-            //修改位示图
+
            bitMap.getFBlocks()[fatBlock.getBlockId() / COLUMN][fatBlock.getBlockId() % COLUMN] = false;
             if (fatBlock.getNextBlockId() == -1) {
                 over = 1;
             }
             else {
-                //继续修改下一个文件分配表项
+
                 Integer next = fatBlock.getNextBlockId();
                 fatBlock.setNextBlockId(-1);
                 fatBlock = fat.getFatBlocks()[next];

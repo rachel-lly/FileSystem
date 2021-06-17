@@ -31,6 +31,22 @@ public class FileSystemApplication implements CommandLineRunner {
             if (MessageHandle.getLoginUserList().isEmpty()) {
                 user = MessageHandle.login();
                 userPath.put(user, new IndexFile(null, null, "\\"));
+
+                System.out.println("\n\t-------------- FileSystem 的常用命令-------------");
+                System.out.println("\tcd      改变当前目录（.. 返回上一级）");
+                System.out.println("\tcreate  创建文件");
+                System.out.println("\tdelete  删除文件");
+                System.out.println("\topen    打开文件");
+                System.out.println("\tclose   关闭文件");
+                System.out.println("\twrite   写入文件");
+                System.out.println("\tread    读取文件");
+                System.out.println("\tmkdir   创建文件夹");
+                System.out.println("\tlink    连接文件（多用户的共享文件夹：share）");
+                System.out.println("\tbitmap  查看当前文件系统的位示图");
+                System.out.println("\tlogout  退出文件系统");
+                System.out.println("\t------------------------------------------------\n");
+                System.out.println("\t注意：命令后加空格 eg：cd "+user.getName()+"[用户专用文件夹]\n");
+
             }
             else {
                 user = MessageHandle.getLoginUserList().get(0);
@@ -39,7 +55,7 @@ public class FileSystemApplication implements CommandLineRunner {
             while (true) {
                 //输出当前路径
                 if (Util.isStringEmpty(userPath.get(user).getFileName())) {
-                    System.out.print("C:"+"\\"+"FileSystem" + userPath.get(user).getPath() + ">");
+                    System.out.print("C:"+"\\"+"FileSystem" + ">");
                 }
                 else {
                     if ("\\".equals(userPath.get(user).getPath())) {
