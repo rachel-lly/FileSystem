@@ -11,13 +11,13 @@ public class BitMap {
 
     private Integer line;
     private Integer column;
-    private Boolean[][] fBlocks;
+    private Boolean[][] isUse;
 
 
     public BitMap(Integer line, Integer column) {
         this.line = line;
         this.column = column;
-        this.fBlocks = new Boolean[line][column];
+        this.isUse = new Boolean[line][column];
     }
     
 }

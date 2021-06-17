@@ -23,13 +23,13 @@ public class ServiceImpl implements Service {
 
     private static Integer index = 0;
 
-    public static LinkedList<IndexFile> root = new LinkedList<>();
+    public static LinkedList<IndexFCBRow> root = new LinkedList<>();
 
     public static BitMap bitMap = new BitMap(LINE, COLUMN);
     public static FAT fat = new FAT(LINE, COLUMN);
     public static FileContent fileContent = new FileContent(LINE, COLUMN);
 
-    private static LinkedList<IndexFile> openFile = new LinkedList<>();
+    private static LinkedList<IndexFCBRow> openFile = new LinkedList<>();
 
     static {
         //初始化文件状态
@@ -46,16 +46,16 @@ public class ServiceImpl implements Service {
 
         bitMap.getFBlocks()[0][0] = true;
 
-        FSFile FSFile = new FSFile(index++, "\\", true, true, fat.getFatBlocks()[0], null,
+        IndexFile IndexFile = new IndexFile(index++, "\\", true, true, fat.getFatBlocks()[0], null,
                 Util.getCurrentTime(), -1, new LinkedList<>());
-        root.add(new IndexFile(FSFile, "share", "\\"));
+        root.add(new IndexFCBRow(IndexFile, "share", "\\"));
     }
 
     @Override
     public void initDirectory(String directoryName) {
 
-        for (IndexFile indexFile : root) {
-            if (indexFile.getFileName().equals(directoryName)) {
+        for (IndexFCBRow indexFCBRow : root) {
+            if (indexFCBRow.getFileName().equals(directoryName)) {
                 return;
             }
         }
@@ -66,58 +66,58 @@ public class ServiceImpl implements Service {
             Integer place = freePos.get(0);
             bitMap.getFBlocks()[place / COLUMN][place % COLUMN] = true;
 
-            FSFile FSFile = new FSFile(index++, "\\", true, true, fat.getFatBlocks()[freePos.get(0)], null,
+            IndexFile IndexFile = new IndexFile(index++, "\\", true, true, fat.getFatBlocks()[freePos.get(0)], null,
                     Util.getCurrentTime(), -1, new LinkedList<>());
-            root.add(new IndexFile(FSFile, directoryName, "\\"));
+            root.add(new IndexFCBRow(IndexFile, directoryName, "\\"));
         }
     }
 
     @Override
     public void getDirectory(User user) {
-        IndexFile indexFile = FileSystemApplication.userPath.get(user);
+        IndexFCBRow indexFCBRow = FileSystemApplication.userPath.get(user);
 
         System.out.println();
-        if ("\\".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
+        if ("\\".equals(indexFCBRow.getPath()) && Util.isNull(indexFCBRow.getFileName())) {
 
 
-            for (IndexFile nowIndexFile : root) {
+            for (IndexFCBRow nowIndexFCBRow : root) {
 
-                if(nowIndexFile.getFSFile().getIsCatalog()){
-                    System.out.println("FileFolder："+ nowIndexFile.getFileName());
+                if(nowIndexFCBRow.getIndexFile().getIsCatalog()){
+                    System.out.println("FileFolder："+ nowIndexFCBRow.getFileName());
                 }else{
-                    System.out.println("File："+ nowIndexFile.getFileName());
+                    System.out.println("File："+ nowIndexFCBRow.getFileName());
                 }
             }
             System.out.println();
             return;
         }
 
-        if (!Util.isNull(indexFile.getFSFile())) {
+        if (!Util.isNull(indexFCBRow.getIndexFile())) {
 
-            if (indexFile.getFSFile().getChildren().size() == 0) {
+            if (indexFCBRow.getIndexFile().getChildren().size() == 0) {
                 System.out.println("The current directory is empty!");
             }else {
-                Iterator<IndexFile> iterator = indexFile.getFSFile().getChildren().iterator();
-                IndexFile help = null;
-                for (IndexFile child : root) {
+                Iterator<IndexFCBRow> iterator = indexFCBRow.getIndexFile().getChildren().iterator();
+                IndexFCBRow help = null;
+                for (IndexFCBRow child : root) {
                     if ("share".equals(child.getFileName())) {
                         help = child;
                         break;
                     }
                 }
                 while (iterator.hasNext()){
-                    IndexFile childrenIndexFile = iterator.next();
+                    IndexFCBRow childrenIndexFCBRow = iterator.next();
 
                     int isFind = 0;
-                    if (!Util.isNull(childrenIndexFile.getFSFile())) {
-                        if (childrenIndexFile.getFSFile().getIsCatalog() ||
-                                (!childrenIndexFile.getFSFile().getIsCatalog() && !childrenIndexFile.getFSFile().getIsPublic())) {
+                    if (!Util.isNull(childrenIndexFCBRow.getIndexFile())) {
+                        if (childrenIndexFCBRow.getIndexFile().getIsCatalog() ||
+                                (!childrenIndexFCBRow.getIndexFile().getIsCatalog() && !childrenIndexFCBRow.getIndexFile().getIsPublic())) {
                             isFind = 1;
                         }
                     }
                     if (isFind == 0){
-                        for (IndexFile remove : help.getFSFile().getChildren()) {
-                            if (remove.getFileName().equals(childrenIndexFile.getFileName()) && remove.getPath().equals(childrenIndexFile.getPath())) {
+                        for (IndexFCBRow remove : help.getIndexFile().getChildren()) {
+                            if (remove.getFileName().equals(childrenIndexFCBRow.getFileName()) && remove.getPath().equals(childrenIndexFCBRow.getPath())) {
                                 isFind = 1;
                                 break;
                             }
@@ -127,20 +127,20 @@ public class ServiceImpl implements Service {
                         iterator.remove();
                     }
                 }
-                if (indexFile.getFSFile().getChildren().size() == 0) {
+                if (indexFCBRow.getIndexFile().getChildren().size() == 0) {
                     System.out.println("The filefolder is empty!");
                     return;
                 }
 
-                for (IndexFile childrenIndexFile : indexFile.getFSFile().getChildren()) {
+                for (IndexFCBRow childrenIndexFCBRow : indexFCBRow.getIndexFile().getChildren()) {
 
-                    if(indexFile.getFileName().equals("share")){
-                        System.out.println("File："+ childrenIndexFile.getFileName());
-                    }else if(childrenIndexFile.getFSFile()!=null){
-                        if(childrenIndexFile.getFSFile().getIsCatalog()){
-                            System.out.println("FileFolder："+ childrenIndexFile.getFileName());
+                    if(indexFCBRow.getFileName().equals("share")){
+                        System.out.println("File："+ childrenIndexFCBRow.getFileName());
+                    }else if(childrenIndexFCBRow.getIndexFile()!=null){
+                        if(childrenIndexFCBRow.getIndexFile().getIsCatalog()){
+                            System.out.println("FileFolder："+ childrenIndexFCBRow.getFileName());
                         }else{
-                            System.out.println("File："+ childrenIndexFile.getFileName());
+                            System.out.println("File："+ childrenIndexFCBRow.getFileName());
                         }
                     }
                 }
@@ -153,17 +153,17 @@ public class ServiceImpl implements Service {
     @Override
     public void  changeDirectory(String message, User user) {
 
-        IndexFile indexFile = findDirectory(message, user, 0);
-        if (Util.isNull(indexFile)) {
+        IndexFCBRow indexFCBRow = findDirectory(message, user, 0);
+        if (Util.isNull(indexFCBRow)) {
             return;
         }
-        if (!Util.isNull(indexFile.getFSFile()) && !indexFile.getFSFile().getIsCatalog()) {
-            System.out.println(indexFile.getFileName() + " is file");
+        if (!Util.isNull(indexFCBRow.getIndexFile()) && !indexFCBRow.getIndexFile().getIsCatalog()) {
+            System.out.println(indexFCBRow.getFileName() + " is file");
             return;
         }
 
         FileSystemApplication.userPath.remove(user);
-        FileSystemApplication.userPath.put(user, indexFile);
+        FileSystemApplication.userPath.put(user, indexFCBRow);
     }
 
     @Override
@@ -188,23 +188,23 @@ public class ServiceImpl implements Service {
             return;
         }
 
-        IndexFile indexFile = findDirectory(message, user, 0);
-        if (!Util.isNull(indexFile)) {
-            if (indexFile.getFSFile().getIsCatalog()) {
-                System.out.println(indexFile.getFileName() + " is directory");
+        IndexFCBRow indexFCBRow = findDirectory(message, user, 0);
+        if (!Util.isNull(indexFCBRow)) {
+            if (indexFCBRow.getIndexFile().getIsCatalog()) {
+                System.out.println(indexFCBRow.getFileName() + " is directory");
             }else {
-                if (indexFile.getFSFile().getStatus() != 2) {
-                    indexFile.getFSFile().setStatus(1);
+                if (indexFCBRow.getIndexFile().getStatus() != 2) {
+                    indexFCBRow.getIndexFile().setStatus(1);
 
-                    if (!isSharedFile(user, indexFile)) {
+                    if (!isSharedFile(user, indexFCBRow)) {
 
                         FileSystemApplication.userPath.remove(user);
-                        FileSystemApplication.userPath.put(user, indexFile.getFSFile().getParent());
+                        FileSystemApplication.userPath.put(user, indexFCBRow.getIndexFile().getParent());
                     }
-                    openFile.add(indexFile);
-                    System.out.println("Open " + indexFile.getFileName() + " Successfully!");
+                    openFile.add(indexFCBRow);
+                    System.out.println("Open " + indexFCBRow.getFileName() + " Successfully!");
                 }else {
-                    System.out.println("Failed to open " + indexFile.getFileName() + ", it's written by other user!");
+                    System.out.println("Failed to open " + indexFCBRow.getFileName() + ", it's written by other user!");
                 }
             }
         }
@@ -215,18 +215,18 @@ public class ServiceImpl implements Service {
         if (!isLegal(user)) {
             return;
         }
-        IndexFile indexFile = findOpenFile(message, user);
-        if (!Util.isNull(indexFile)) {
-            if (indexFile.getFSFile().getIsCatalog()) {
-                System.out.println(indexFile.getFileName() + " is directory!");
+        IndexFCBRow indexFCBRow = findOpenFile(message, user);
+        if (!Util.isNull(indexFCBRow)) {
+            if (indexFCBRow.getIndexFile().getIsCatalog()) {
+                System.out.println(indexFCBRow.getFileName() + " is directory!");
             }
             else {
-                if (indexFile.getFSFile().getStatus() != 2) {
-                    indexFile.getFSFile().setStatus(0);
-                    openFile.remove(indexFile);
-                    System.out.println("Close " + indexFile.getFileName() + " Successfully!");
+                if (indexFCBRow.getIndexFile().getStatus() != 2) {
+                    indexFCBRow.getIndexFile().setStatus(0);
+                    openFile.remove(indexFCBRow);
+                    System.out.println("Close " + indexFCBRow.getFileName() + " Successfully!");
                 }else {
-                    System.out.println("Failed to close " + indexFile.getFileName() + ", it's written by other user!");
+                    System.out.println("Failed to close " + indexFCBRow.getFileName() + ", it's written by other user!");
                 }
             }
         }
@@ -241,21 +241,21 @@ public class ServiceImpl implements Service {
             return;
         }
 
-        IndexFile indexFile = findOpenFile(message, user);
-        if (!Util.isNull(indexFile)) {
-            if (indexFile.getFSFile().getIsCatalog()) {
-                System.out.println(indexFile.getFileName() + " is directory!");
+        IndexFCBRow indexFCBRow = findOpenFile(message, user);
+        if (!Util.isNull(indexFCBRow)) {
+            if (indexFCBRow.getIndexFile().getIsCatalog()) {
+                System.out.println(indexFCBRow.getFileName() + " is directory!");
             }
             else {
-                switch (indexFile.getFSFile().getStatus()) {
+                switch (indexFCBRow.getIndexFile().getStatus()) {
                     case 0:
                         System.out.println("Please open file first!");
                         break;
                     case 1:
-                        printFileContent(indexFile);
+                        printFileContent(indexFCBRow);
                         break;
                     case 2:
-                        System.out.println("Failed to read " + indexFile.getFileName() + ", it's written by other user!");
+                        System.out.println("Failed to read " + indexFCBRow.getFileName() + ", it's written by other user!");
                 }
             }
         }
@@ -270,23 +270,23 @@ public class ServiceImpl implements Service {
             return;
         }
 
-        IndexFile indexFile = findOpenFile(message, user);
-        if (!Util.isNull(indexFile)) {
-            if (indexFile.getFSFile().getIsCatalog()) {
-                System.out.println(indexFile.getFileName() + "is directory!");
+        IndexFCBRow indexFCBRow = findOpenFile(message, user);
+        if (!Util.isNull(indexFCBRow)) {
+            if (indexFCBRow.getIndexFile().getIsCatalog()) {
+                System.out.println(indexFCBRow.getFileName() + "is directory!");
             }
             else {
-                switch (indexFile.getFSFile().getStatus()) {
+                switch (indexFCBRow.getIndexFile().getStatus()) {
                     case 0:
                         System.out.println("Please open the file firstly!");
                         break;
                     case 1:
-                        indexFile.getFSFile().setStatus(2);
-                        writeFile(indexFile);
-                        printFileContent(indexFile);
+                        indexFCBRow.getIndexFile().setStatus(2);
+                        writeFile(indexFCBRow);
+                        printFileContent(indexFCBRow);
                         break;
                     case 2:
-                        System.out.println("Fail to read " + indexFile.getFileName() + ", it's written by other user!");
+                        System.out.println("Fail to read " + indexFCBRow.getFileName() + ", it's written by other user!");
                 }
             }
         }
@@ -301,46 +301,46 @@ public class ServiceImpl implements Service {
             return;
         }
 
-        IndexFile indexFile = findDirectory(message, user, 0);
-        if (Util.isNull(indexFile)) {
+        IndexFCBRow indexFCBRow = findDirectory(message, user, 0);
+        if (Util.isNull(indexFCBRow)) {
             return;
         }
 
-        if (Util.isNull(indexFile.getFSFile().getParent())) {
+        if (Util.isNull(indexFCBRow.getIndexFile().getParent())) {
             System.out.println("You can't delete the root directory");
             return;
         }
 
-        if (!user.getName().equals(indexFile.getPath().substring(1).split("\\\\")[0])) {
+        if (!user.getName().equals(indexFCBRow.getPath().substring(1).split("\\\\")[0])) {
             System.out.println("You haven't permission to delete this file");
             return;
         }
 
-        if (FileSystemApplication.userPath.get(user).getPath().equals(indexFile.getPath()) &&
-                FileSystemApplication.userPath.get(user).getFileName().equals(indexFile.getFileName())) {
+        if (FileSystemApplication.userPath.get(user).getPath().equals(indexFCBRow.getPath()) &&
+                FileSystemApplication.userPath.get(user).getFileName().equals(indexFCBRow.getFileName())) {
 
             FileSystemApplication.userPath.remove(user);
-            FileSystemApplication.userPath.put(user, indexFile.getFSFile().getParent());
+            FileSystemApplication.userPath.put(user, indexFCBRow.getIndexFile().getParent());
         }
-        indexFile.getFSFile().getParent().getFSFile().getChildren().remove(indexFile);
+        indexFCBRow.getIndexFile().getParent().getIndexFile().getChildren().remove(indexFCBRow);
 
-        if (indexFile.getFSFile().getIsPublic()) {
-            IndexFile help = null;
-            for (IndexFile child : root) {
+        if (indexFCBRow.getIndexFile().getIsPublic()) {
+            IndexFCBRow help = null;
+            for (IndexFCBRow child : root) {
                 if ("share".equals(child.getFileName())) {
                     help = child;
                     break;
                 }
             }
-            for (IndexFile remove : help.getFSFile().getChildren()) {
-                if (remove.getFileName().equals(indexFile.getFileName())) {
-                    help.getFSFile().getChildren().remove(remove);
+            for (IndexFCBRow remove : help.getIndexFile().getChildren()) {
+                if (remove.getFileName().equals(indexFCBRow.getFileName())) {
+                    help.getIndexFile().getChildren().remove(remove);
                     break;
                 }
             }
         }
 
-        freeRoom(indexFile);
+        freeRoom(indexFCBRow);
     }
 
     @Override
@@ -350,23 +350,23 @@ public class ServiceImpl implements Service {
         }
 
         String fileName = message.split(" ")[1];
-        IndexFile help = null;
-        for (IndexFile child : root) {
+        IndexFCBRow help = null;
+        for (IndexFCBRow child : root) {
             if ("share".equals(child.getFileName())) {
                 help = child;
                 break;
             }
         }
-        IndexFile indexFile = null;
-        if (!Util.isNull(help) && !Util.isNull(help.getFSFile())) {
-            if (help.getFSFile().getChildren().size() == 0) {
+        IndexFCBRow indexFCBRow = null;
+        if (!Util.isNull(help) && !Util.isNull(help.getIndexFile())) {
+            if (help.getIndexFile().getChildren().size() == 0) {
                 System.out.println("There are no files!");
                 return;
             }
             int isFind = 0;
-            for (IndexFile file : help.getFSFile().getChildren()) {
+            for (IndexFCBRow file : help.getIndexFile().getChildren()) {
                 if (file.getFileName().equals(fileName)) {
-                    indexFile = file;
+                    indexFCBRow = file;
                     isFind = 1;
                     break;
                 }
@@ -376,19 +376,19 @@ public class ServiceImpl implements Service {
                 return;
             }
         }
-        if (!Util.isNull(indexFile)) {
+        if (!Util.isNull(indexFCBRow)) {
             //找到父目录
-            indexFile = findDirectory("cd " + indexFile.getPath().substring(1), user, 1);
-            IndexFile userPath = FileSystemApplication.userPath.get(user);
-            if (!Util.isNull(indexFile) && !Util.isNull(indexFile.getFSFile())) {
-                if (indexFile.getFSFile().getChildren().size() == 0) {
+            indexFCBRow = findDirectory("cd " + indexFCBRow.getPath().substring(1), user, 1);
+            IndexFCBRow userPath = FileSystemApplication.userPath.get(user);
+            if (!Util.isNull(indexFCBRow) && !Util.isNull(indexFCBRow.getIndexFile())) {
+                if (indexFCBRow.getIndexFile().getChildren().size() == 0) {
                     System.out.println("The file had been deleted!");
                     return;
                 }
                 int isFind = 0;
-                for (IndexFile file : indexFile.getFSFile().getChildren()) {
+                for (IndexFCBRow file : indexFCBRow.getIndexFile().getChildren()) {
                     if (file.getFileName().equals(fileName)) {
-                        indexFile = file;
+                        indexFCBRow = file;
                         isFind = 1;
                         break;
                     }
@@ -398,7 +398,7 @@ public class ServiceImpl implements Service {
                     return;
                 }
             }
-            userPath.getFSFile().getChildren().add(indexFile);
+            userPath.getIndexFile().getChildren().add(indexFCBRow);
         }
     }
 
@@ -440,9 +440,9 @@ public class ServiceImpl implements Service {
 
     }
 
-    private void writeFile(IndexFile indexFile) {
+    private void writeFile(IndexFCBRow indexFCBRow) {
 
-        printFileContent(indexFile);
+        printFileContent(indexFCBRow);
 
         //“#”截止输入
         Scanner scanner = new Scanner(System.in);
@@ -456,7 +456,7 @@ public class ServiceImpl implements Service {
         }
 
 
-        FatBlock fatBlock = indexFile.getFSFile().getFirstBlock();
+        FatBlock fatBlock = indexFCBRow.getIndexFile().getFirstBlock();
         Integer number;
         int over = 0;
         do {
@@ -520,14 +520,14 @@ public class ServiceImpl implements Service {
             }
         }
 
-        indexFile.getFSFile().setModifyTime(Util.getCurrentTime());
-        indexFile.getFSFile().setStatus(1);
+        indexFCBRow.getIndexFile().setModifyTime(Util.getCurrentTime());
+        indexFCBRow.getIndexFile().setStatus(1);
     }
 
-    private void printFileContent(IndexFile indexFile) {
-        System.out.println(indexFile.getFileName() + " content：");
+    private void printFileContent(IndexFCBRow indexFCBRow) {
+        System.out.println(indexFCBRow.getFileName() + " content：");
 
-        FatBlock fatBlock = indexFile.getFSFile().getFirstBlock();
+        FatBlock fatBlock = indexFCBRow.getIndexFile().getFirstBlock();
         StringBuffer content = new StringBuffer();
         int over = 0;
         do {
@@ -552,23 +552,23 @@ public class ServiceImpl implements Service {
     private void createNewDirectoryOrFile(String message, User user, Integer type) {
 
         String[] path = message.split(" ")[1].split("\\\\");
-        IndexFile userPath = FileSystemApplication.userPath.get(user);
-        IndexFile indexFile = new IndexFile(userPath.getFSFile(), userPath.getFileName(), userPath.getPath());
+        IndexFCBRow userPath = FileSystemApplication.userPath.get(user);
+        IndexFCBRow indexFCBRow = new IndexFCBRow(userPath.getIndexFile(), userPath.getFileName(), userPath.getPath());
 
-        List<IndexFile> childDirectory = null;
+        List<IndexFCBRow> childDirectory = null;
 
         for (int i = 0; i < path.length; i++) {
 
             if ("..".equals(path[i])) {
 
-                if (!Util.isNull(indexFile.getFSFile())){
+                if (!Util.isNull(indexFCBRow.getIndexFile())){
 
-                    if (Util.isNull(indexFile.getFSFile().getParent())) {
-                        indexFile.setFSFile(null);
-                        indexFile.setFileName(null);
-                        indexFile.setPath("\\");
+                    if (Util.isNull(indexFCBRow.getIndexFile().getParent())) {
+                        indexFCBRow.setIndexFile(null);
+                        indexFCBRow.setFileName(null);
+                        indexFCBRow.setPath("\\");
                     }else {
-                        indexFile = indexFile.getFSFile().getParent();
+                        indexFCBRow = indexFCBRow.getIndexFile().getParent();
                     }
 
                 }
@@ -576,21 +576,21 @@ public class ServiceImpl implements Service {
             }
 
 
-            if ("\\".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
+            if ("\\".equals(indexFCBRow.getPath()) && Util.isNull(indexFCBRow.getFileName())) {
                 childDirectory = root;
-            }else if (!Util.isNull(indexFile.getFSFile())) {
+            }else if (!Util.isNull(indexFCBRow.getIndexFile())) {
 
-                if (indexFile.getFSFile().getChildren().size() == 0) {
-                    IndexFile newDirectory = null;
+                if (indexFCBRow.getIndexFile().getChildren().size() == 0) {
+                    IndexFCBRow newDirectory = null;
 
                     if (i == path.length - 1) {
 
-                        if ("/".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
+                        if ("/".equals(indexFCBRow.getPath()) && Util.isNull(indexFCBRow.getFileName())) {
                             System.out.println("Can't create files in the root!");
                             return;
                         }
 
-                        if ("\\".equals(indexFile.getPath()) && "share".equals(indexFile.getFileName())) {
+                        if ("\\".equals(indexFCBRow.getPath()) && "share".equals(indexFCBRow.getFileName())) {
                             System.out.println("Can't create files in the share!");
                             return;
                         }
@@ -606,33 +606,33 @@ public class ServiceImpl implements Service {
                     }
 
 
-                    if ("\\".equals(indexFile.getPath())) {
-                        newDirectory.setPath(indexFile.getPath() + indexFile.getFileName());
-                        newDirectory.getFSFile().setPath(indexFile.getPath() + indexFile.getFileName());
+                    if ("\\".equals(indexFCBRow.getPath())) {
+                        newDirectory.setPath(indexFCBRow.getPath() + indexFCBRow.getFileName());
+                        newDirectory.getIndexFile().setPath(indexFCBRow.getPath() + indexFCBRow.getFileName());
                     }else {
-                        newDirectory.setPath(indexFile.getPath() + "\\" + indexFile.getFileName());
-                        newDirectory.getFSFile().setPath(indexFile.getPath() + "\\" + indexFile.getFileName());
+                        newDirectory.setPath(indexFCBRow.getPath() + "\\" + indexFCBRow.getFileName());
+                        newDirectory.getIndexFile().setPath(indexFCBRow.getPath() + "\\" + indexFCBRow.getFileName());
                     }
-                    newDirectory.getFSFile().setParent(indexFile);
-                    indexFile.getFSFile().getChildren().add(newDirectory);
+                    newDirectory.getIndexFile().setParent(indexFCBRow);
+                    indexFCBRow.getIndexFile().getChildren().add(newDirectory);
 
 
 
 
                     if (type != 0 || i != path.length - 1) {
-                        indexFile = newDirectory;
+                        indexFCBRow = newDirectory;
                     }
 
-                    if (!newDirectory.getFSFile().getIsCatalog() && newDirectory.getFSFile().getIsPublic()) {
-                        for (IndexFile root : root) {
+                    if (!newDirectory.getIndexFile().getIsCatalog() && newDirectory.getIndexFile().getIsPublic()) {
+                        for (IndexFCBRow root : root) {
                             if ("share".equals(root.getFileName())) {
-                                root.getFSFile().getChildren().add(new IndexFile(null, newDirectory.getFileName(), newDirectory.getPath()));
+                                root.getIndexFile().getChildren().add(new IndexFCBRow(null, newDirectory.getFileName(), newDirectory.getPath()));
                             }
                         }
                     }
                     continue;
                 }else {
-                    childDirectory = indexFile.getFSFile().getChildren();
+                    childDirectory = indexFCBRow.getIndexFile().getChildren();
                 }
 
 
@@ -642,7 +642,7 @@ public class ServiceImpl implements Service {
 
             if (!Util.isNull(childDirectory)) {
                 boolean isChange = false;
-                for (IndexFile child : childDirectory) {
+                for (IndexFCBRow child : childDirectory) {
                     if (child.getFileName().equals(path[i])) {
                         if (i == path.length - 1) {
 
@@ -650,7 +650,7 @@ public class ServiceImpl implements Service {
                             return;
                         }
 
-                        indexFile = child;
+                        indexFCBRow = child;
                         isChange = true;
                         break;
                     }
@@ -659,16 +659,16 @@ public class ServiceImpl implements Service {
 
                 if (!isChange) {
 
-                    IndexFile newDirectory = null;
+                    IndexFCBRow newDirectory = null;
 
                     if (i == path.length - 1) {
 
-                        if ("\\".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
+                        if ("\\".equals(indexFCBRow.getPath()) && Util.isNull(indexFCBRow.getFileName())) {
                             System.out.println("Can't create files in the root!");
                             return;
                         }
 
-                        if ("\\".equals(indexFile.getPath()) && "share".equals(indexFile.getFileName())) {
+                        if ("\\".equals(indexFCBRow.getPath()) && "share".equals(indexFCBRow.getFileName())) {
                             System.out.println("Can't create files in the share!");
                             return;
                         }
@@ -684,28 +684,28 @@ public class ServiceImpl implements Service {
                     }
 
 
-                    if ("\\".equals(indexFile.getPath())) {
-                        newDirectory.setPath(indexFile.getPath() + indexFile.getFileName());
-                        newDirectory.getFSFile().setPath(indexFile.getPath() + indexFile.getFileName());
+                    if ("\\".equals(indexFCBRow.getPath())) {
+                        newDirectory.setPath(indexFCBRow.getPath() + indexFCBRow.getFileName());
+                        newDirectory.getIndexFile().setPath(indexFCBRow.getPath() + indexFCBRow.getFileName());
                     } else {
-                        newDirectory.setPath(indexFile.getPath() + "\\" + indexFile.getFileName());
-                        newDirectory.getFSFile().setPath(indexFile.getPath() + "\\" + indexFile.getFileName());
+                        newDirectory.setPath(indexFCBRow.getPath() + "\\" + indexFCBRow.getFileName());
+                        newDirectory.getIndexFile().setPath(indexFCBRow.getPath() + "\\" + indexFCBRow.getFileName());
                     }
-                    newDirectory.getFSFile().setParent(indexFile);
+                    newDirectory.getIndexFile().setParent(indexFCBRow);
 
-                    indexFile.getFSFile().getChildren().add(newDirectory);
+                    indexFCBRow.getIndexFile().getChildren().add(newDirectory);
 
 
 
-                    if (newDirectory.getFSFile().getIsCatalog() || (i == path.length - 1 && newDirectory.getFSFile().getIsCatalog())) {
-                        indexFile = newDirectory;
+                    if (newDirectory.getIndexFile().getIsCatalog() || (i == path.length - 1 && newDirectory.getIndexFile().getIsCatalog())) {
+                        indexFCBRow = newDirectory;
                     }
 
 
 
-                    if (!newDirectory.getFSFile().getIsCatalog() && newDirectory.getFSFile().getIsPublic()) {
-                        for (IndexFile root : root) {
-                            root.getFSFile().getChildren().add(new IndexFile(null, newDirectory.getFileName(), newDirectory.getPath()));
+                    if (!newDirectory.getIndexFile().getIsCatalog() && newDirectory.getIndexFile().getIsPublic()) {
+                        for (IndexFCBRow root : root) {
+                            root.getIndexFile().getChildren().add(new IndexFCBRow(null, newDirectory.getFileName(), newDirectory.getPath()));
                         }
                     }
                 }
@@ -713,20 +713,20 @@ public class ServiceImpl implements Service {
         }
 
         FileSystemApplication.userPath.remove(user);
-        FileSystemApplication.userPath.put(user, indexFile);
+        FileSystemApplication.userPath.put(user, indexFCBRow);
     }
 
-    private IndexFile newDirectory(String fileName, Integer type) {
+    private IndexFCBRow newDirectory(String fileName, Integer type) {
 
         List<Integer> freeLoc = findDatFreePos(1);
         if (freeLoc.size() != 0) {
 
             Integer place = freeLoc.get(0);
             bitMap.getFBlocks()[place / COLUMN][place % COLUMN] = true;
-            FSFile FSFile = null;
+            IndexFile IndexFile = null;
             if (type == 1) {
 
-                FSFile = new FSFile(index++, null, true, true, fat.getFatBlocks()[freeLoc.get(0)], null,
+                IndexFile = new IndexFile(index++, null, true, true, fat.getFatBlocks()[freeLoc.get(0)], null,
                         Util.getCurrentTime(), -1, new LinkedList<>());
             }
             else if (type == 0) {
@@ -754,22 +754,22 @@ public class ServiceImpl implements Service {
                     b = false;
                 }
 
-                FSFile = new FSFile(index++, null, false, b, fat.getFatBlocks()[freeLoc.get(0)], null,
+                IndexFile = new IndexFile(index++, null, false, b, fat.getFatBlocks()[freeLoc.get(0)], null,
                         Util.getCurrentTime(), 0, null);
             }
-            return new IndexFile(FSFile, fileName, null);
+            return new IndexFCBRow(IndexFile, fileName, null);
         }
         System.out.println("Space isn't enough");
         return null;
     }
 
 
-    private IndexFile findOpenFile(String message, User user) {
-        IndexFile userPath = FileSystemApplication.userPath.get(user);
+    private IndexFCBRow findOpenFile(String message, User user) {
+        IndexFCBRow userPath = FileSystemApplication.userPath.get(user);
         String filePath = message.split(" ")[1];
-        for (IndexFile indexFile : openFile) {
+        for (IndexFCBRow indexFCBRow : openFile) {
             String[] fileName = filePath.split("\\\\");
-            if (fileName[fileName.length - 1].equals(indexFile.getFileName())) {
+            if (fileName[fileName.length - 1].equals(indexFCBRow.getFileName())) {
 
                 String path;
                 if (!"\\".equals(userPath.getPath())) {
@@ -781,19 +781,19 @@ public class ServiceImpl implements Service {
                 for (int i = 0; i < fileName.length - 1; i++) {
                     path = path + "\\" + fileName[i];
                 }
-                if (path.equals(indexFile.getPath())) {
-                    return indexFile;
+                if (path.equals(indexFCBRow.getPath())) {
+                    return indexFCBRow;
                 }
-                if (!indexFile.getPath().substring(1).split("\\\\")[0].equals(user.getName())) {
-                    return indexFile;
+                if (!indexFCBRow.getPath().substring(1).split("\\\\")[0].equals(user.getName())) {
+                    return indexFCBRow;
                 }
             }
         }
         return null;
     }
 
-    private Boolean isSharedFile(User user, IndexFile indexFile) {
-        String userName = indexFile.getPath().substring(1).split("\\\\")[0];
+    private Boolean isSharedFile(User user, IndexFCBRow indexFCBRow) {
+        String userName = indexFCBRow.getPath().substring(1).split("\\\\")[0];
         if (user.getName().equals(userName)) {
             return false;
         }
@@ -801,7 +801,7 @@ public class ServiceImpl implements Service {
     }
 
     private Boolean isLegal(User user) {
-        IndexFile userPath = FileSystemApplication.userPath.get(user);
+        IndexFCBRow userPath = FileSystemApplication.userPath.get(user);
         if ("share".equals(userPath.getFileName()) && "\\".equals(userPath.getPath())) {
             System.out.println("The share isn't operational!");
             return false;
@@ -832,52 +832,52 @@ public class ServiceImpl implements Service {
         return freePos;
     }
 
-    private IndexFile findDirectory(String message, User user, Integer type) {
+    private IndexFCBRow findDirectory(String message, User user, Integer type) {
         String[] path = message.split(" ")[1].split("\\\\");
-        IndexFile userPath;
+        IndexFCBRow userPath;
         if (type == 1) {
-            userPath = new IndexFile(null, null, "\\");
+            userPath = new IndexFCBRow(null, null, "\\");
         }
         else {
             userPath = FileSystemApplication.userPath.get(user);
         }
-        IndexFile indexFile = new IndexFile(userPath.getFSFile(), userPath.getFileName(), userPath.getPath());
-        List<IndexFile> childDirectory = null;
+        IndexFCBRow indexFCBRow = new IndexFCBRow(userPath.getIndexFile(), userPath.getFileName(), userPath.getPath());
+        List<IndexFCBRow> childDirectory = null;
 
         for (int i = 0; i < path.length; i++) {
             if ("..".equals(path[i])) {
 
-                if (!Util.isNull(indexFile.getFSFile())) {
-                    if (Util.isNull(indexFile.getFSFile().getParent())) {
-                        indexFile.setFSFile(null);
-                        indexFile.setFileName(null);
-                        indexFile.setPath("\\");
+                if (!Util.isNull(indexFCBRow.getIndexFile())) {
+                    if (Util.isNull(indexFCBRow.getIndexFile().getParent())) {
+                        indexFCBRow.setIndexFile(null);
+                        indexFCBRow.setFileName(null);
+                        indexFCBRow.setPath("\\");
                     }
                     else {
-                        indexFile = indexFile.getFSFile().getParent();
+                        indexFCBRow = indexFCBRow.getIndexFile().getParent();
                     }
                 }
                 continue;
             }
             int isRoot = 0;
 
-            if ("\\".equals(indexFile.getPath()) && Util.isNull(indexFile.getFileName())) {
+            if ("\\".equals(indexFCBRow.getPath()) && Util.isNull(indexFCBRow.getFileName())) {
                 childDirectory = root;
                 isRoot = 1;
             }
-            else if (!Util.isNull(indexFile.getFSFile())) {
+            else if (!Util.isNull(indexFCBRow.getIndexFile())) {
 
-                if (indexFile.getFSFile().getChildren().size() == 0) {
-                    System.out.println(indexFile.getFileName() + " is empty!");
+                if (indexFCBRow.getIndexFile().getChildren().size() == 0) {
+                    System.out.println(indexFCBRow.getFileName() + " is empty!");
                     return null;
                 }
                 else {
-                    childDirectory = indexFile.getFSFile().getChildren();
+                    childDirectory = indexFCBRow.getIndexFile().getChildren();
                 }
             }
             if (!Util.isNull(childDirectory)) {
                 boolean isChange = false;
-                for (IndexFile child : childDirectory) {
+                for (IndexFCBRow child : childDirectory) {
                     if (child.getFileName().equals(path[i])) {
                         if (isRoot == 1) {
                             if (!user.getName().equals(path[i]) && !"share".equals(path[i]) && type == 0) {
@@ -886,8 +886,8 @@ public class ServiceImpl implements Service {
                             }
                         }
 
-                        if (child.getFSFile().getIsCatalog()) {
-                            indexFile = child;
+                        if (child.getIndexFile().getIsCatalog()) {
+                            indexFCBRow = child;
                             isChange = true;
                             break;
                         }
@@ -906,17 +906,17 @@ public class ServiceImpl implements Service {
                 }
             }
         }
-        return indexFile;
+        return indexFCBRow;
     }
 
-    private void freeRoom(IndexFile indexFile) {
-        if (indexFile.getFSFile().getIsCatalog()) {
-            for (IndexFile child : indexFile.getFSFile().getChildren()) {
+    private void freeRoom(IndexFCBRow indexFCBRow) {
+        if (indexFCBRow.getIndexFile().getIsCatalog()) {
+            for (IndexFCBRow child : indexFCBRow.getIndexFile().getChildren()) {
                 freeRoom(child);
             }
         }
-        indexFile.getFSFile().setParent(null);
-        FatBlock fatBlock = indexFile.getFSFile().getFirstBlock();
+        indexFCBRow.getIndexFile().setParent(null);
+        FatBlock fatBlock = indexFCBRow.getIndexFile().getFirstBlock();
         int over = 0;
 
         do {
