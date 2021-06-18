@@ -83,9 +83,9 @@ public class ServiceImpl implements Service {
             for (FCB nowFCB : root) {
 
                 if(nowFCB.getIndexFile().getIsCatalog()){
-                    System.out.println("FileFolder："+ nowFCB.getFileName());
+                    System.out.println("FileFolder: "+ nowFCB.getFileName());
                 }else{
-                    System.out.println("File："+ nowFCB.getFileName());
+                    System.out.println("File: "+ nowFCB.getFileName());
                 }
             }
             System.out.println();
@@ -135,12 +135,12 @@ public class ServiceImpl implements Service {
                 for (FCB childrenFCB : FCB.getIndexFile().getChildren()) {
 
                     if(FCB.getFileName().equals("share")){
-                        System.out.println("File："+ childrenFCB.getFileName());
+                        System.out.println("File: "+ childrenFCB.getFileName());
                     }else if(childrenFCB.getIndexFile()!=null){
                         if(childrenFCB.getIndexFile().getIsCatalog()){
-                            System.out.println("FileFolder："+ childrenFCB.getFileName());
+                            System.out.println("FileFolder: "+ childrenFCB.getFileName());
                         }else{
-                            System.out.println("File："+ childrenFCB.getFileName());
+                            System.out.println("File: "+ childrenFCB.getFileName());
                         }
                     }
                 }
@@ -203,6 +203,7 @@ public class ServiceImpl implements Service {
                     }
                     openFile.add(FCB);
                     System.out.println("Open " + FCB.getFileName() + " Successfully!");
+                    System.out.println(FCB.getIndexFile());
                 }else {
                     System.out.println("Failed to open " + FCB.getFileName() + ", it's written by other user!");
                 }
@@ -445,6 +446,7 @@ public class ServiceImpl implements Service {
         printFileContent(FCB);
 
         //“#”截止输入
+        System.out.println("\nplease enter file content end at '#':");
         Scanner scanner = new Scanner(System.in);
         StringBuffer result = new StringBuffer();
         while (true) {
@@ -525,7 +527,7 @@ public class ServiceImpl implements Service {
     }
 
     private void printFileContent(FCB FCB) {
-        System.out.println(FCB.getFileName() + " content：");
+        System.out.println(FCB.getFileName() + " content:");
 
         FatBlock fatBlock = FCB.getIndexFile().getFirstBlock();
         StringBuffer content = new StringBuffer();
@@ -712,6 +714,7 @@ public class ServiceImpl implements Service {
             }
         }
 
+        System.out.println("\ncreate file successfully!\n");
         FileSystemApplication.userPath.remove(user);
         FileSystemApplication.userPath.put(user, FCB);
     }
@@ -734,7 +737,7 @@ public class ServiceImpl implements Service {
                 String choice;
                 while (true) {
                     System.out.println();
-                    System.out.println("Please select permissions：0-private  1-public");
+                    System.out.println("Please select permissions: 0-private  1-public");
                     choice = scanner.nextLine();
                     if (!"0".equals(choice) && !"1".equals(choice)) {
                         System.out.println("Enter error . Please enter again.");

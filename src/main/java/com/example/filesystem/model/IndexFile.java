@@ -43,4 +43,18 @@ public class IndexFile {
         this.status = status;
         this.children = children;
     }
+
+    @Override
+    public String toString() {
+        return "\nIndexFile={"
+                + "\nindex = "+index
+                + "\npath = "+path
+                + "\nCatalog = "+isCatalog
+                + "\nPublic = "+isPublic
+                + "\nFatBlock = "+firstBlock
+                + "\nmodifyTime = "+modifyTime
+                + "\nstatus = "+status
+                + "\nchildren = "+children
+                +"\n}\n";
+    }
 }
