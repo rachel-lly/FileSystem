@@ -1,6 +1,6 @@
 package com.example.filesystem.client;
 
-import com.example.filesystem.service.MessageHandle;
+import com.example.filesystem.service.CommandHandle;
 import com.example.filesystem.model.User;
 import com.example.filesystem.util.UserLoginUtil;
 import java.io.BufferedReader;
@@ -78,7 +78,7 @@ public class Client {
                         if (count > 0) {
                             String receiveMessage = new String(readBuffer.array(), 0, count);
 
-                            MessageHandle.clientMessage(receiveMessage, client);
+                            CommandHandle.clientMessage(receiveMessage, client);
                         }
                     }
                 }

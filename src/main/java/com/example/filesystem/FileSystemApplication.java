@@ -2,7 +2,7 @@ package com.example.filesystem;
 
 import com.example.filesystem.model.FCB;
 import com.example.filesystem.model.User;
-import com.example.filesystem.service.MessageHandle;
+import com.example.filesystem.service.CommandHandle;
 import com.example.filesystem.util.Util;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
@@ -28,8 +28,8 @@ public class FileSystemApplication implements CommandLineRunner {
         while (true) {
             User user;
             //判断用户是否已经登录
-            if (MessageHandle.getLoginUserList().isEmpty()) {
-                user = MessageHandle.login();
+            if (CommandHandle.getLoginUserList().isEmpty()) {
+                user = CommandHandle.login();
                 userPath.put(user, new FCB(null, null, "\\"));
 
                 System.out.println("\n\t-------------- FileSystem 的常用命令-------------");
@@ -49,7 +49,7 @@ public class FileSystemApplication implements CommandLineRunner {
 
             }
             else {
-                user = MessageHandle.getLoginUserList().get(0);
+                user = CommandHandle.getLoginUserList().get(0);
             }
             Scanner scanner = new Scanner(System.in);
             while (true) {
@@ -66,13 +66,13 @@ public class FileSystemApplication implements CommandLineRunner {
                     }
                 }
 
-                String message = scanner.nextLine();
-                if ("logout".equals(message)) {
+                String command = scanner.nextLine();
+                if ("logout".equals(command)) {
                     System.out.println("Exit successfully!");
-                    MessageHandle.getLoginUserList().clear();
+                    CommandHandle.getLoginUserList().clear();
                     break;
                 }
-                MessageHandle.handleMessage(message, user);
+                CommandHandle.handleCommand(command, user);
             }
         }
     }

@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Scanner;
 
 @Component
-public class MessageHandle {
+public class CommandHandle {
 
     private static final List<User> loginUserList = new ArrayList<>();
     
     @Autowired
     private Service service;
     
-    private static MessageHandle messageHandle;
+    private static CommandHandle commandHandle;
 
     @PostConstruct
     public void init() {
-        messageHandle = this;
-        messageHandle.service = this.service;
+        commandHandle = this;
+        commandHandle.service = this.service;
     }
 
     public static void addUser(User user) {
@@ -64,9 +64,9 @@ public class MessageHandle {
             System.out.print("password:");
             password = scanner.nextLine();
 
-            user = messageHandle.service.login(username, password);
+            user = commandHandle.service.login(username, password);
             if (!Util.isNull(user)) {
-                messageHandle.service.initDirectory(username);
+                commandHandle.service.initDirectory(username);
                 addUser(user);
                 break;
             }
@@ -74,45 +74,45 @@ public class MessageHandle {
         return user;
     }
 
-    public static void handleMessage(String message, User user) {
-        if (Util.isStringEmpty(message)) {
+    public static void handleCommand(String command, User user) {
+        if (Util.isStringEmpty(command)) {
             return;
         }
-        if ("dir".equals(message)) {
-            messageHandle.service.getDirectory(user);
+        if ("dir".equals(command)) {
+            commandHandle.service.getDirectory(user);
         }
-        else if (message.matches("cd .+")) {
-            messageHandle.service.changeDirectory(message, user);
+        else if (command.matches("cd .+")) {
+            commandHandle.service.changeDirectory(command, user);
         }
-        else if (message.matches("create .+")) {
-            messageHandle.service.createFile(message, user);
+        else if (command.matches("create .+")) {
+            commandHandle.service.createFile(command, user);
         }
-        else if (message.matches("delete .+")) {
-            messageHandle.service.deleteFile(message, user);
+        else if (command.matches("delete .+")) {
+            commandHandle.service.deleteFile(command, user);
         }
-        else if (message.matches("open .+")) {
-            messageHandle.service.openFile(message, user);
+        else if (command.matches("open .+")) {
+            commandHandle.service.openFile(command, user);
         }
-        else if (message.matches("close .+")) {
-            messageHandle.service.closeFile(message, user);
+        else if (command.matches("close .+")) {
+            commandHandle.service.closeFile(command, user);
         }
-        else if (message.matches("read .+")) {
-            messageHandle.service.readFile(message, user);
+        else if (command.matches("read .+")) {
+            commandHandle.service.readFile(command, user);
         }
-        else if (message.matches("write .+")) {
-            messageHandle.service.writeFile(message, user);
+        else if (command.matches("write .+")) {
+            commandHandle.service.writeFile(command, user);
         }
-        else if (message.matches("mkdir .+")) {
-            messageHandle.service.createDirectory(message, user);
+        else if (command.matches("mkdir .+")) {
+            commandHandle.service.createDirectory(command, user);
         }
-        else if (message.matches("link .+")) {
-            messageHandle.service.linkFile(message, user);
+        else if (command.matches("link .+")) {
+            commandHandle.service.linkFile(command, user);
         }
-        else if (message.matches("bitmap")) {
-            messageHandle.service.showBitMap();
+        else if (command.matches("bitmap")) {
+            commandHandle.service.showBitMap();
         }
         else {
-            System.out.println("Invalid command " + message);
+            System.out.println("Invalid command " + command);
         }
     }
 

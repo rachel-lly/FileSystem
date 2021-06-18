@@ -12,17 +12,17 @@ public interface Service {
 
     void initDirectory(String directoryName);
     void getDirectory(User user);
-    void changeDirectory(String message, User user);
-    void createDirectory(String message, User user);
+    void changeDirectory(String command, User user);
+    void createDirectory(String command, User user);
 
 
-    void createFile(String message, User user);
-    void openFile(String message, User user);
-    void closeFile(String message, User user);
-    void readFile(String message, User user);
-    void writeFile(String message, User user);
-    void deleteFile(String message, User user);
-    void linkFile(String message, User user);
+    void createFile(String command, User user);
+    void openFile(String command, User user);
+    void closeFile(String command, User user);
+    void readFile(String command, User user);
+    void writeFile(String command, User user);
+    void deleteFile(String command, User user);
+    void linkFile(String command, User user);
 
     void showBitMap();
 

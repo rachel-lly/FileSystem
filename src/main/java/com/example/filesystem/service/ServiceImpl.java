@@ -151,9 +151,9 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public void  changeDirectory(String message, User user) {
+    public void  changeDirectory(String command, User user) {
 
-        FCB FCB = findDirectory(message, user, 0);
+        FCB FCB = findDirectory(command, user, 0);
         if (Util.isNull(FCB)) {
             return;
         }
@@ -167,28 +167,28 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public void createDirectory(String message, User user) {
+    public void createDirectory(String command, User user) {
         if (!isLegal(user)) {
             return;
         }
-        createNewDirectoryOrFile(message, user, 1);
+        createNewDirectoryOrFile(command, user, 1);
     }
 
     @Override
-    public void createFile(String message, User user) {
+    public void createFile(String command, User user) {
         if (!isLegal(user)) {
             return;
         }
-        createNewDirectoryOrFile(message, user, 0);
+        createNewDirectoryOrFile(command, user, 0);
     }
 
     @Override
-    public void openFile(String message, User user) {
+    public void openFile(String command, User user) {
         if (!isLegal(user)) {
             return;
         }
 
-        FCB FCB = findDirectory(message, user, 0);
+        FCB FCB = findDirectory(command, user, 0);
         if (!Util.isNull(FCB)) {
             if (FCB.getIndexFile().getIsCatalog()) {
                 System.out.println(FCB.getFileName() + " is directory");
@@ -212,11 +212,11 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public void closeFile(String message, User user) {
+    public void closeFile(String command, User user) {
         if (!isLegal(user)) {
             return;
         }
-        FCB FCB = findOpenFile(message, user);
+        FCB FCB = findOpenFile(command, user);
         if (!Util.isNull(FCB)) {
             if (FCB.getIndexFile().getIsCatalog()) {
                 System.out.println(FCB.getFileName() + " is directory!");
@@ -237,12 +237,12 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public void readFile(String message, User user) {
+    public void readFile(String command, User user) {
         if (!isLegal(user)) {
             return;
         }
 
-        FCB FCB = findOpenFile(message, user);
+        FCB FCB = findOpenFile(command, user);
         if (!Util.isNull(FCB)) {
             if (FCB.getIndexFile().getIsCatalog()) {
                 System.out.println(FCB.getFileName() + " is directory!");
@@ -266,12 +266,12 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public void writeFile(String message, User user) {
+    public void writeFile(String command, User user) {
         if (!isLegal(user)) {
             return;
         }
 
-        FCB FCB = findOpenFile(message, user);
+        FCB FCB = findOpenFile(command, user);
         if (!Util.isNull(FCB)) {
             if (FCB.getIndexFile().getIsCatalog()) {
                 System.out.println(FCB.getFileName() + "is directory!");
@@ -297,35 +297,30 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public void deleteFile(String message, User user) {
+    public void deleteFile(String command, User user) {
         if (!isLegal(user)) {
             return;
         }
 
-        FCB FCB = findDirectory(message, user, 0);
-        if (Util.isNull(FCB)) {
+        FCB nowFCB = findDirectory(command, user, 0);
+        if (Util.isNull(nowFCB)) {
             return;
         }
 
-        if (Util.isNull(FCB.getIndexFile().getParent())) {
+        if (Util.isNull(nowFCB.getIndexFile().getParent())) {
             System.out.println("You can't delete the root directory");
             return;
         }
 
-        if (!user.getName().equals(FCB.getPath().substring(1).split("\\\\")[0])) {
-            System.out.println("You haven't permission to delete this file");
-            return;
-        }
-
-        if (FileSystemApplication.userPath.get(user).getPath().equals(FCB.getPath()) &&
-                FileSystemApplication.userPath.get(user).getFileName().equals(FCB.getFileName())) {
+        if (FileSystemApplication.userPath.get(user).getPath().equals(nowFCB.getPath()) &&
+                FileSystemApplication.userPath.get(user).getFileName().equals(nowFCB.getFileName())) {
 
             FileSystemApplication.userPath.remove(user);
-            FileSystemApplication.userPath.put(user, FCB.getIndexFile().getParent());
+            FileSystemApplication.userPath.put(user, nowFCB.getIndexFile().getParent());
         }
-        FCB.getIndexFile().getParent().getIndexFile().getChildren().remove(FCB);
+        nowFCB.getIndexFile().getParent().getIndexFile().getChildren().remove(nowFCB);
 
-        if (FCB.getIndexFile().getIsPublic()) {
+        if (nowFCB.getIndexFile().getIsPublic()) {
             FCB help = null;
             for (FCB child : root) {
                 if ("share".equals(child.getFileName())) {
@@ -334,23 +329,23 @@ public class ServiceImpl implements Service {
                 }
             }
             for (FCB remove : help.getIndexFile().getChildren()) {
-                if (remove.getFileName().equals(FCB.getFileName())) {
+                if (remove.getFileName().equals(nowFCB.getFileName())) {
                     help.getIndexFile().getChildren().remove(remove);
                     break;
                 }
             }
         }
 
-        freeRoom(FCB);
+        freeRoom(nowFCB);
     }
 
     @Override
-    public void linkFile(String message, User user) {
+    public void linkFile(String command, User user) {
         if (!isLegal(user)) {
             return;
         }
 
-        String fileName = message.split(" ")[1];
+        String fileName = command.split(" ")[1];
         FCB help = null;
         for (FCB child : root) {
             if ("share".equals(child.getFileName())) {
@@ -551,26 +546,26 @@ public class ServiceImpl implements Service {
         }
     }
 
-    private void createNewDirectoryOrFile(String message, User user, Integer type) {
+    private void createNewDirectoryOrFile(String command, User user, Integer type) {
 
-        String[] path = message.split(" ")[1].split("\\\\");
+        String[] path = command.split(" ")[1].split("\\/");
         FCB userPath = FileSystemApplication.userPath.get(user);
-        FCB FCB = new FCB(userPath.getIndexFile(), userPath.getFileName(), userPath.getPath());
+        FCB nowFCB = new FCB(userPath.getIndexFile(), userPath.getFileName(), userPath.getPath());
 
         List<FCB> childDirectory = null;
 
         for (int i = 0; i < path.length; i++) {
 
             if ("..".equals(path[i])) {
+            //若用户输入 .. 则依次返回至上一级
+                if (!Util.isNull(nowFCB.getIndexFile())){
 
-                if (!Util.isNull(FCB.getIndexFile())){
-
-                    if (Util.isNull(FCB.getIndexFile().getParent())) {
-                        FCB.setIndexFile(null);
-                        FCB.setFileName(null);
-                        FCB.setPath("\\");
+                    if (Util.isNull(nowFCB.getIndexFile().getParent())) {
+                        nowFCB.setIndexFile(null);
+                        nowFCB.setFileName(null);
+                        nowFCB.setPath("\\");
                     }else {
-                        FCB = FCB.getIndexFile().getParent();
+                        nowFCB = nowFCB.getIndexFile().getParent();
                     }
 
                 }
@@ -578,25 +573,23 @@ public class ServiceImpl implements Service {
             }
 
 
-            if ("\\".equals(FCB.getPath()) && Util.isNull(FCB.getFileName())) {
+            if ("\\".equals(nowFCB.getPath()) && Util.isNull(nowFCB.getFileName())) {
+                //为根目录
                 childDirectory = root;
-            }else if (!Util.isNull(FCB.getIndexFile())) {
 
-                if (FCB.getIndexFile().getChildren().size() == 0) {
-                    FCB newDirectory = null;
+            }else if (!Util.isNull(nowFCB.getIndexFile())) {//索引文件不为空
+
+                //若没有子目录，则创建子目录并进入子目录
+                if (nowFCB.getIndexFile().getChildren().size() == 0) {
+
+                    FCB newDirectory;
 
                     if (i == path.length - 1) {
+                    //此时为最后一级 创建索引文件
 
-                        if ("/".equals(FCB.getPath()) && Util.isNull(FCB.getFileName())) {
-                            System.out.println("Can't create files in the root!");
+                        if (!isLegal(nowFCB)) {
                             return;
                         }
-
-                        if ("\\".equals(FCB.getPath()) && "share".equals(FCB.getFileName())) {
-                            System.out.println("Can't create files in the share!");
-                            return;
-                        }
-
                         newDirectory = newDirectory(path[i], type);
                     }else {
                         newDirectory = newDirectory(path[i], 1);
@@ -607,22 +600,22 @@ public class ServiceImpl implements Service {
                         return;
                     }
 
-
-                    if ("\\".equals(FCB.getPath())) {
-                        newDirectory.setPath(FCB.getPath() + FCB.getFileName());
-                        newDirectory.getIndexFile().setPath(FCB.getPath() + FCB.getFileName());
+                    //父目录与子目录建立关系
+                    if ("\\".equals(nowFCB.getPath())) {
+                        newDirectory.setPath(nowFCB.getPath() + nowFCB.getFileName());
+                        newDirectory.getIndexFile().setPath(nowFCB.getPath() + nowFCB.getFileName());
                     }else {
-                        newDirectory.setPath(FCB.getPath() + "\\" + FCB.getFileName());
-                        newDirectory.getIndexFile().setPath(FCB.getPath() + "\\" + FCB.getFileName());
+                        newDirectory.setPath(nowFCB.getPath() + "\\" + nowFCB.getFileName());
+                        newDirectory.getIndexFile().setPath(nowFCB.getPath() + "\\" + nowFCB.getFileName());
                     }
-                    newDirectory.getIndexFile().setParent(FCB);
-                    FCB.getIndexFile().getChildren().add(newDirectory);
+                    newDirectory.getIndexFile().setParent(nowFCB);
+                    nowFCB.getIndexFile().getChildren().add(newDirectory);
 
 
 
 
                     if (type != 0 || i != path.length - 1) {
-                        FCB = newDirectory;
+                        nowFCB = newDirectory;
                     }
 
                     if (!newDirectory.getIndexFile().getIsCatalog() && newDirectory.getIndexFile().getIsPublic()) {
@@ -634,7 +627,7 @@ public class ServiceImpl implements Service {
                     }
                     continue;
                 }else {
-                    childDirectory = FCB.getIndexFile().getChildren();
+                    childDirectory = nowFCB.getIndexFile().getChildren();
                 }
 
 
@@ -643,16 +636,18 @@ public class ServiceImpl implements Service {
 
 
             if (!Util.isNull(childDirectory)) {
+                //当前有子目录
                 boolean isChange = false;
+                //在当前子目录查找要插入的目录
                 for (FCB child : childDirectory) {
                     if (child.getFileName().equals(path[i])) {
                         if (i == path.length - 1) {
-
+                            //判断该目录是否存在重名的文件
                             System.out.println(child.getFileName() + " has existed!");
                             return;
                         }
 
-                        FCB = child;
+                        nowFCB = child;
                         isChange = true;
                         break;
                     }
@@ -660,18 +655,12 @@ public class ServiceImpl implements Service {
 
 
                 if (!isChange) {
-
-                    FCB newDirectory = null;
+                //找不到要插入的目录，需要创建新目录
+                    FCB newDirectory;
 
                     if (i == path.length - 1) {
 
-                        if ("\\".equals(FCB.getPath()) && Util.isNull(FCB.getFileName())) {
-                            System.out.println("Can't create files in the root!");
-                            return;
-                        }
-
-                        if ("\\".equals(FCB.getPath()) && "share".equals(FCB.getFileName())) {
-                            System.out.println("Can't create files in the share!");
+                        if (!isLegal(nowFCB)) {
                             return;
                         }
 
@@ -686,21 +675,21 @@ public class ServiceImpl implements Service {
                     }
 
 
-                    if ("\\".equals(FCB.getPath())) {
-                        newDirectory.setPath(FCB.getPath() + FCB.getFileName());
-                        newDirectory.getIndexFile().setPath(FCB.getPath() + FCB.getFileName());
+                    if ("/".equals(nowFCB.getPath())) {
+                        newDirectory.setPath(nowFCB.getPath() + nowFCB.getFileName());
+                        newDirectory.getIndexFile().setPath(nowFCB.getPath() + nowFCB.getFileName());
                     } else {
-                        newDirectory.setPath(FCB.getPath() + "\\" + FCB.getFileName());
-                        newDirectory.getIndexFile().setPath(FCB.getPath() + "\\" + FCB.getFileName());
+                        newDirectory.setPath(nowFCB.getPath() + "\\" + nowFCB.getFileName());
+                        newDirectory.getIndexFile().setPath(nowFCB.getPath() + "\\" + nowFCB.getFileName());
                     }
-                    newDirectory.getIndexFile().setParent(FCB);
+                    newDirectory.getIndexFile().setParent(nowFCB);
 
-                    FCB.getIndexFile().getChildren().add(newDirectory);
+                    nowFCB.getIndexFile().getChildren().add(newDirectory);
 
 
 
                     if (newDirectory.getIndexFile().getIsCatalog() || (i == path.length - 1 && newDirectory.getIndexFile().getIsCatalog())) {
-                        FCB = newDirectory;
+                        nowFCB = newDirectory;
                     }
 
 
@@ -714,9 +703,9 @@ public class ServiceImpl implements Service {
             }
         }
 
-        System.out.println("\ncreate file successfully!\n");
+        System.out.println("\ncreate successfully!\n");
         FileSystemApplication.userPath.remove(user);
-        FileSystemApplication.userPath.put(user, FCB);
+        FileSystemApplication.userPath.put(user, nowFCB);
     }
 
     private FCB newDirectory(String fileName, Integer type) {
@@ -728,11 +717,10 @@ public class ServiceImpl implements Service {
             bitMap.getIsUse()[place / COLUMN][place % COLUMN] = true;
             IndexFile IndexFile = null;
             if (type == 1) {
-
+                //创建文件目录
                 IndexFile = new IndexFile(index++, null, true, true, fat.getFatBlocks()[freeLoc.get(0)], null,
                         Util.getCurrentTime(), -1, new LinkedList<>());
-            }
-            else if (type == 0) {
+            }else{
                 Scanner scanner = new Scanner(System.in);
                 String choice;
                 while (true) {
@@ -747,15 +735,7 @@ public class ServiceImpl implements Service {
                     }
                 }
 
-
-
-                boolean b;
-
-                if(choice.equals("1")){
-                    b = true;
-                }else{
-                    b = false;
-                }
+                boolean b = choice.equals("1");
 
                 IndexFile = new IndexFile(index++, null, false, b, fat.getFatBlocks()[freeLoc.get(0)], null,
                         Util.getCurrentTime(), 0, null);
@@ -767,11 +747,11 @@ public class ServiceImpl implements Service {
     }
 
 
-    private FCB findOpenFile(String message, User user) {
+    private FCB findOpenFile(String command, User user) {
         FCB userPath = FileSystemApplication.userPath.get(user);
-        String filePath = message.split(" ")[1];
+        String filePath = command.split(" ")[1];
         for (FCB FCB : openFile) {
-            String[] fileName = filePath.split("\\\\");
+            String[] fileName = filePath.split("\\/");
             if (fileName[fileName.length - 1].equals(FCB.getFileName())) {
 
                 String path;
@@ -805,11 +785,23 @@ public class ServiceImpl implements Service {
 
     private Boolean isLegal(User user) {
         FCB userPath = FileSystemApplication.userPath.get(user);
-        if ("share".equals(userPath.getFileName()) && "\\".equals(userPath.getPath())) {
+        if ("\\".equals(userPath.getPath())&&"share".equals(userPath.getFileName())) {
             System.out.println("The share isn't operational!");
             return false;
         }
         if ("\\".equals(userPath.getPath()) && Util.isStringEmpty(userPath.getFileName())) {
+            System.out.println("The root isn't operational!");
+            return false;
+        }
+        return true;
+    }
+
+    private Boolean isLegal(FCB fcb) {
+        if ("\\".equals(fcb.getPath())&&"share".equals(fcb.getFileName())) {
+            System.out.println("The share isn't operational!");
+            return false;
+        }
+        if ("\\".equals(fcb.getPath()) && Util.isStringEmpty(fcb.getFileName())) {
             System.out.println("The root isn't operational!");
             return false;
         }
@@ -835,13 +827,12 @@ public class ServiceImpl implements Service {
         return freePos;
     }
 
-    private FCB findDirectory(String message, User user, Integer type) {
-        String[] path = message.split(" ")[1].split("\\\\");
+    private FCB findDirectory(String command, User user, Integer type) {
+        String[] path = command.split(" ")[1].split("\\/");
         FCB userPath;
         if (type == 1) {
             userPath = new FCB(null, null, "\\");
-        }
-        else {
+        }else {
             userPath = FileSystemApplication.userPath.get(user);
         }
         FCB FCB = new FCB(userPath.getIndexFile(), userPath.getFileName(), userPath.getPath());
@@ -855,8 +846,7 @@ public class ServiceImpl implements Service {
                         FCB.setIndexFile(null);
                         FCB.setFileName(null);
                         FCB.setPath("\\");
-                    }
-                    else {
+                    }else {
                         FCB = FCB.getIndexFile().getParent();
                     }
                 }
@@ -867,8 +857,7 @@ public class ServiceImpl implements Service {
             if ("\\".equals(FCB.getPath()) && Util.isNull(FCB.getFileName())) {
                 childDirectory = root;
                 isRoot = 1;
-            }
-            else if (!Util.isNull(FCB.getIndexFile())) {
+            }else if (!Util.isNull(FCB.getIndexFile())) {
 
                 if (FCB.getIndexFile().getChildren().size() == 0) {
                     System.out.println(FCB.getFileName() + " is empty!");
