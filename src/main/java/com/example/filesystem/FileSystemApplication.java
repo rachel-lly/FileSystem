@@ -30,7 +30,8 @@ public class FileSystemApplication implements CommandLineRunner {
             //判断用户是否已经登录
             if (CommandHandle.getLoginUserList().isEmpty()) {
                 user = CommandHandle.login();
-                userPath.put(user, new FCB(null, null, "\\"));
+                //初始化根目录
+                userPath.put(user, new FCB(null, null, "\\FileSystem"));
 
                 System.out.println("\n\t-------------- FileSystem 的常用命令-------------");
                 System.out.println("\tcd      改变当前目录（.. 返回上一级）");
@@ -45,7 +46,7 @@ public class FileSystemApplication implements CommandLineRunner {
                 System.out.println("\tbitmap  查看当前文件系统的位示图");
                 System.out.println("\tlogout  退出文件系统");
                 System.out.println("\t------------------------------------------------\n");
-                System.out.println("\t注意：命令后加空格 eg：cd "+user.getName()+"[用户专用文件夹]\n");
+                System.out.println("\t注意：命令后加空格 eg：cd "+user.getName()+"[用户专属文件夹]\n");
 
             }
             else {
@@ -55,15 +56,10 @@ public class FileSystemApplication implements CommandLineRunner {
             while (true) {
                 //输出当前路径
                 if (Util.isStringEmpty(userPath.get(user).getFileName())) {
-                    System.out.print("C:"+"\\"+"FileSystem" + ">");
+                    System.out.print("C:" +userPath.get(user).getPath()+ ">");
                 }
                 else {
-                    if ("\\".equals(userPath.get(user).getPath())) {
-                        System.out.print("C:"+"\\"+"FileSystem" + userPath.get(user).getPath() + userPath.get(user).getFileName() + ">");
-                    }
-                    else {
-                        System.out.print("C:"+"\\"+"FileSystem" + userPath.get(user).getPath() + "\\" + userPath.get(user).getFileName() + ">");
-                    }
+                    System.out.print("C:"+ userPath.get(user).getPath() + "\\" + userPath.get(user).getFileName() + ">");
                 }
 
                 String command = scanner.nextLine();

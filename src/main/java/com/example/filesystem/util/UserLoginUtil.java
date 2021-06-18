@@ -45,10 +45,11 @@ public class UserLoginUtil {
             username = scanner.nextLine();
             System.out.print("password:");
             password = scanner.nextLine();
-            if (Util.isStringEmpty(username) || Util.isStringEmpty(password)) {
-                System.out.println("username or password is empty");
-            }
-            else {
+            if (Util.isStringEmpty(username)) {
+                System.out.println("username is empty");
+            }else if( Util.isStringEmpty(password)){
+                System.out.println("password is empty");
+            }else {
                 break;
             }
         }

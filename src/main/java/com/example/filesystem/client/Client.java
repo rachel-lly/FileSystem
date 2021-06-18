@@ -54,6 +54,7 @@ public class Client {
                                         if (UserLoginUtil.loginMap.isEmpty()) {
 
                                             User user = UserLoginUtil.userLogin(byteBuffer, client);
+
                                             UserLoginUtil.loginMap.put(client, user);
                                         }else {
                                             byteBuffer.clear();

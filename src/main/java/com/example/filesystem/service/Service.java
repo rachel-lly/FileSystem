@@ -10,8 +10,8 @@ import com.example.filesystem.model.User;
 
 public interface Service {
 
-    void initDirectory(String directoryName);
-    void getDirectory(User user);
+    void initUserDirectory(String userName);
+    void getFileList(User user);
     void changeDirectory(String command, User user);
     void createDirectory(String command, User user);
 

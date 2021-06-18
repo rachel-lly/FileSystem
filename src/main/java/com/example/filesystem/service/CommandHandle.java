@@ -27,11 +27,6 @@ public class CommandHandle {
         commandHandle.service = this.service;
     }
 
-    public static void addUser(User user) {
-        if (!Util.isNull(user)) {
-            loginUserList.add(user);
-        }
-    }
 
     public static List<User> getLoginUserList() {
         return loginUserList;
@@ -41,14 +36,14 @@ public class CommandHandle {
     public static void clientMessage(String receiveMessage, SocketChannel client) {
 
         if (Util.isStringEmpty(receiveMessage)) {
-            System.out.println("Send empty message!");
+            System.out.println("Empty message!");
             return;
         }
         if (receiveMessage.equals("loginSuccess")) {
-            System.out.println("Login successfully！enter ENTER to in root directory！");
+            System.out.println("Login successfully!");
         }
         if (receiveMessage.equals("loginFail")) {
-            System.out.println("Login fail！enter ENTER to login again！");
+            System.out.println("Login fail!");
             UserLoginUtil.loginMap.remove(client);
         }
 
@@ -66,8 +61,8 @@ public class CommandHandle {
 
             user = commandHandle.service.login(username, password);
             if (!Util.isNull(user)) {
-                commandHandle.service.initDirectory(username);
-                addUser(user);
+                commandHandle.service.initUserDirectory(username);
+                loginUserList.add(user);
                 break;
             }
         }
@@ -79,7 +74,7 @@ public class CommandHandle {
             return;
         }
         if ("dir".equals(command)) {
-            commandHandle.service.getDirectory(user);
+            commandHandle.service.getFileList(user);
         }
         else if (command.matches("cd .+")) {
             commandHandle.service.changeDirectory(command, user);
