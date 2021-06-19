@@ -374,7 +374,7 @@ public class ServiceImpl implements Service {
         }
         if (!Util.isNull(FCB)) {
             //找到父目录
-            FCB = findDirectory("cd " + FCB.getPath().substring(11), user, 0,true);
+            FCB = findDirectory("cd " + FCB.getPath().substring(11), user, 1);
             FCB userPath = FileSystemApplication.userPath.get(user);
             if (!Util.isNull(FCB) && !Util.isNull(FCB.getIndexFile())) {
                 if (FCB.getIndexFile().getChildren().size() == 0) {
@@ -813,11 +813,17 @@ public class ServiceImpl implements Service {
     }
 
     private FCB findDirectory(String command, User user, Integer type) {
-        String[] path = command.split(" ")[1].split("\\/");
+        String[] path;
         FCB userPath;
         if (type == 1) {
+
+            path = command.split(" ")[1].split("\\\\");
+
+            path = Arrays.copyOfRange(path,1,path.length);
+
             userPath = new FCB(null, null, "\\FileSystem");
         }else {
+            path = command.split(" ")[1].split("\\/");
             userPath = FileSystemApplication.userPath.get(user);
         }
         FCB FCB = new FCB(userPath.getIndexFile(), userPath.getFileName(), userPath.getPath());
