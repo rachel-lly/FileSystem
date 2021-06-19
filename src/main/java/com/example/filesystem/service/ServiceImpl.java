@@ -892,69 +892,6 @@ public class ServiceImpl implements Service {
         return FCB;
     }
 
-
-    private FCB findDirectory(String command, User user, Integer type,boolean b) {
-
-        String[] path = command.split(" ")[1].split("\\\\");
-
-        path = Arrays.copyOfRange(path,1,path.length);
-
-
-
-        FCB userPath = new FCB(null, null, "\\FileSystem");
-
-        FCB FCB = new FCB(userPath.getIndexFile(), userPath.getFileName(), userPath.getPath());
-        List<FCB> childDirectory = null;
-
-        for (int i = 0; i < path.length; i++) {
-            if ("..".equals(path[i])) {
-
-                if (!Util.isNull(FCB.getIndexFile())) {
-                    if (Util.isNull(FCB.getIndexFile().getParent())) {
-                        FCB.setIndexFile(null);
-                        FCB.setFileName(null);
-                        FCB.setPath("\\FileSystem");
-                    }else {
-                        FCB = FCB.getIndexFile().getParent();
-                    }
-                }
-                continue;
-            }
-
-
-            if ("\\FileSystem".equals(FCB.getPath()) && Util.isNull(FCB.getFileName())) {
-                childDirectory = root;
-            }
-            if (!Util.isNull(childDirectory)) {
-                boolean isChange = false;
-                for (FCB child : childDirectory) {
-                    if (child.getFileName().equals(path[i])) {
-
-                        if (child.getIndexFile().getIsCatalog()) {
-                            FCB = child;
-                            isChange = true;
-                            break;
-                        }
-                        else {
-                            if (i != path.length - 1) {
-                                System.out.println("\n"+child.getFileName() + " is file!\n");
-                                return null;
-                            }
-                            return child;
-                        }
-                    }
-                }
-                if (!isChange) {
-                    System.out.println("\nNot exist " + path[i] + "!\n");
-                    return null;
-                }
-            }
-        }
-        return FCB;
-
-
-    }
-
     private void freeRoom(FCB FCB) {
         if (FCB.getIndexFile().getIsCatalog()) {
             for (FCB child : FCB.getIndexFile().getChildren()) {

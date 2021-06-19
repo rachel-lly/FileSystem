@@ -20,14 +20,14 @@ public class FileSystemApplication implements CommandLineRunner {
         SpringApplication.run(FileSystemApplication.class, args);
     }
 
-    //存储用户当前所在的目录
+    //存储用户当前所在的路径
     public static Map<User, FCB> userPath = new HashMap<>();
 
     @Override
     public void run(String... args){
         while (true) {
             User user;
-            //判断用户是否已经登录
+            //判断用户是否登录
             if (CommandHandle.getLoginUserList().isEmpty()) {
                 user = CommandHandle.login();
                 //初始化根目录

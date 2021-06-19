@@ -1,7 +1,6 @@
 package com.example.filesystem.model;
 
 import lombok.Data;
-
 import java.util.LinkedList;
 
 /**
