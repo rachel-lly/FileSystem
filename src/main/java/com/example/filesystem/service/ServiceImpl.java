@@ -18,6 +18,7 @@ public class ServiceImpl implements Service {
     private static final Integer COLUMN = 10;
     private static final Integer BLOCKSIZE = 10;
 
+
     @Resource
     private UserMapper mapper;
 
@@ -254,6 +255,7 @@ public class ServiceImpl implements Service {
                         break;
                     case 1:
                         printFileContent(FCB);
+
                         break;
                     case 2:
                         System.out.println("Failed to read " + FCB.getFileName() + ", it's written by other user!");
@@ -446,10 +448,12 @@ public class ServiceImpl implements Service {
 
         //“#”截止输入
         System.out.println("\nplease enter file content end at '#':");
+
         Scanner scanner = new Scanner(System.in);
         StringBuffer result = new StringBuffer();
         while (true) {
             String content = scanner.nextLine() + "\r\n";
+
             if ("#\r\n".equals(content)) {
                 break;
             }
@@ -530,7 +534,7 @@ public class ServiceImpl implements Service {
 
         FatBlock fatBlock = FCB.getIndexFile().getFirstBlock();
         StringBuffer content = new StringBuffer();
-        int over = 0;
+        int over = 0,count = 0;
         do {
             Integer number = fatBlock.getBlockId();
             if (fatBlock.getNextBlockId() == -1) {
@@ -542,11 +546,18 @@ public class ServiceImpl implements Service {
                 fatBlock = fat.getFatBlocks()[next];
             }
             if (fileContent.getContent()[number / COLUMN][number % COLUMN] != null) {
+                count++;
                 content.append(fileContent.getContent()[number / COLUMN][number % COLUMN]);
             }
         } while (over == 0);
         if (content.length() != 0) {
             System.out.println(content);
+//            int del = 0;
+//            if(count>1){
+//                del = count-1;
+//            }
+//            System.out.println(FCB.getFileName() + "'s size:"+(content.length()-2*del));
+//            System.out.println("The total block space is "+LINE*COLUMN*BLOCKSIZE+" .Every block's size is "+BLOCKSIZE+". The file has "+count+" blocks.");
         }
     }
 
@@ -559,24 +570,6 @@ public class ServiceImpl implements Service {
         List<FCB> childDirectory = null;
 
         for (int i = 0; i < path.length; i++) {
-
-            if ("..".equals(path[i])) {
-            //若用户输入 .. 则依次返回至上一级
-                if (!Util.isNull(nowFCB.getIndexFile())){
-
-                    if (Util.isNull(nowFCB.getIndexFile().getParent())) {
-                        nowFCB.setIndexFile(null);
-                        nowFCB.setFileName(null);
-                        nowFCB.setPath("\\FileSystem");
-                    }else {
-                        nowFCB = nowFCB.getIndexFile().getParent();
-                    }
-
-                }
-                continue;
-            }
-
-
             if ("\\FileSystem".equals(nowFCB.getPath()) && Util.isNull(nowFCB.getFileName())) {
                 //为根目录
                 childDirectory = root;
