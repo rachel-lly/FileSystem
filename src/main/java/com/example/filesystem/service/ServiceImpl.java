@@ -485,10 +485,10 @@ public class ServiceImpl implements Service {
 
         if (leftover > 0) {
             if (result.length() > leftover) {
-                fileContent.getContent()[number / COLUMN][number % COLUMN] += "\r\n" + result.substring(0, leftover);
+                fileContent.getContent()[number / COLUMN][number % COLUMN] += result.substring(0, leftover);
             }
             else {
-                fileContent.getContent()[number / COLUMN][number % COLUMN] += "\r\n" + result;
+                fileContent.getContent()[number / COLUMN][number % COLUMN] += result;
             }
         }
 
@@ -552,12 +552,9 @@ public class ServiceImpl implements Service {
         } while (over == 0);
         if (content.length() != 0) {
             System.out.println(content);
-//            int del = 0;
-//            if(count>1){
-//                del = count-1;
-//            }
-//            System.out.println(FCB.getFileName() + "'s size:"+(content.length()-2*del));
-//            System.out.println("The total block space is "+LINE*COLUMN*BLOCKSIZE+" .Every block's size is "+BLOCKSIZE+". The file has "+count+" blocks.");
+            System.out.println("\n"+FCB.getFileName() + "'s size:"+content.length());
+            System.out.println("The total block space is "+LINE*COLUMN*BLOCKSIZE+" .Every block's size is "+BLOCKSIZE+". The file has "+count+" blocks.\n");
+
         }
     }
 
